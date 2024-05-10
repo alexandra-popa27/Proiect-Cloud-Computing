@@ -34,25 +34,19 @@ export const getRecordById = async (id) => {
     }
 }
 
-export const createRecord = async (record) => {
+export const createRecord = async (entry) => {
     try {
-        delete record._id;
-
         const response = await fetch("/api/records", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(record),
+            body: JSON.stringify(entry),
         });
 
         const data = await response.json();
 
-        if (!data?.data) {
-            return null;
-        }
-
-        return data.data;
+        return data;
     } catch (error) {
         console.error(error);
     }
