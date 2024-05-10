@@ -6,6 +6,7 @@ o	Link GitHub: https://github.com/alexandra-popa27/Proiect-Cloud-Computing
 
 o	Link Video Youtube: https://youtu.be/jga-H9vOb-I
 
+Intreaga documentatie este disponibila in proiect.
 
 Introducere
 
