@@ -35,7 +35,7 @@ const RegisterForm = ({ onSubmit, onCancel }) => {
             placeholder="Your full name"
             value={formData.name}
             onChange={(e) => handleChange("name", e.target.value)}
-            className="block w-full py-2.5 px-0 text-sm border-b-2 bg-transparent focus:outline-none focus:border-blue-600"
+            className="block w-full py-2.5 px-0 text-white border-b-2 bg-transparent focus:outline-none focus:border-blue-600"
             required
           />
         </div>
@@ -45,7 +45,7 @@ const RegisterForm = ({ onSubmit, onCancel }) => {
             placeholder="Your phone number"
             value={formData.phone}
             onChange={(e) => handleChange("phone", e.target.value)}
-            className="block w-full py-2.5 px-0 text-sm border-b-2 bg-transparent focus:outline-none focus:border-blue-600"
+            className="block w-full py-2.5 px-0 text-white border-b-2 bg-transparent focus:outline-none focus:border-blue-600"
             required
           />
         </div>
@@ -55,7 +55,7 @@ const RegisterForm = ({ onSubmit, onCancel }) => {
             placeholder="Your email"
             value={formData.email}
             onChange={(e) => handleChange("email", e.target.value)}
-            className="block w-full py-2.5 px-0 text-sm border-b-2 bg-transparent focus:outline-none focus:border-blue-600"
+            className="block w-full py-2.5 px-0 text-white border-b-2 bg-transparent focus:outline-none focus:border-blue-600"
             required
           />
         </div>
@@ -65,7 +65,7 @@ const RegisterForm = ({ onSubmit, onCancel }) => {
             placeholder="Password"
             value={formData.password}
             onChange={(e) => handleChange("password", e.target.value)}
-            className="block w-full py-2.5 px-0 text-sm border-b-2 bg-transparent focus:outline-none focus:border-blue-600"
+            className="block w-full py-2.5 px-0 text-white border-b-2 bg-transparent focus:outline-none focus:border-blue-600"
             required
           />
           <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-2 text-xs text-blue-600 hover:underline">
@@ -78,7 +78,7 @@ const RegisterForm = ({ onSubmit, onCancel }) => {
             placeholder="Confirm password"
             value={formData.confirmPassword}
             onChange={(e) => handleChange("confirmPassword", e.target.value)}
-            className="block w-full py-2.5 px-0 text-sm border-b-2 bg-transparent focus:outline-none focus:border-blue-600"
+            className="block w-full py-2.5 px-0 text-white border-b-2 bg-transparent focus:outline-none focus:border-blue-600"
             required
           />
           <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-2 top-2 text-xs text-blue-600 hover:underline">

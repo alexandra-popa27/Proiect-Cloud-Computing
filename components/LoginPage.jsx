@@ -7,8 +7,32 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
-    router.push("/main"); // logică temporară
+  const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+  
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const json = await res.json();
+  
+      if (!res.ok) {
+        alert(json.error || "Login failed.");
+        return;
+      }
+  
+      alert(`Welcome, ${json.data.name}!`);
+      router.push("/main");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   const handleRegisterRedirect = () => {
