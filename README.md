@@ -1,40 +1,85 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Links
 
-## Getting Started
+o	Link pagina web: https://proiect-cloud-computing-git-main-alexandra-popas-projects.vercel.app/
 
-First, run the development server:
+o	Link GitHub: https://github.com/alexandra-popa27/Proiect-Cloud-Computing
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+o	Link Video Youtube: https://youtu.be/jga-H9vOb-I
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Intreaga documentatie este disponibila in proiect.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+Introducere
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+The Cooking Hub este o aplicatie web dedicata gestionarii retetelor, construita cu ajutorul platformelor Vercel, MongoDB si Visual Studio Code. 
+Aceasta ofera utilizatorilor o platforma simpla si intuitiva pentru a vizualiza, adauga, actualiza si sterge retete.
+Principalele functionalitati ale aplicatiei includ:
+o	Vizualizarea Retetelor: Utilizatorii pot explora toate retetele disponibile, fiecare avand detalii precum imagine, nume, tip de bucatarie, dificultate etc.
+o	Adaugarea unei Retete Noi: Utilizatorii pot crea retete noi prin completarea unui formular care include informatii precum ingrediente, instructiuni, timp de preparare si gatire, numar de portii, etichete etc.
+o	Actualizarea unei Retete: Exista posibilitatea de a actualiza detaliile unei retete existente, inclusiv modificarea sau adaugarea de ingrediente, instructiuni sau alte informatii relevante.
+o	Stergerea unei Retete: Utilizatorii pot sterge retetele pe care nu le mai doresc in baza de date.
+The Cooking Hub ofera o experienta fluida si placuta, permitand pasionatilor de gatit sa-si organizeze si sa-si gestioneze colectia de retete intr-un mod eficient si simplu. Prin integrarea cu MongoDB, aplicatia asigura o stocare sigura si scalabila a datelor, iar implementarea pe Vercel permite accesul rapid si usor din orice dispozitiv conectat la internet.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Descriere problema
+Pentru a indeplini obiectivele stabilite, aplicația The Cooking Hub trebuie sa indeplineasca urmatoarele cerinte:
+o	Utilizarea a doua servicii în cloud: Pentru a asigura scalabilitatea si disponibilitatea, aplicatia va utiliza doua servicii in cloud.
+o	API REST: Aplicatia va comunica cu serviciile în cloud prin intermediul unui API REST. Acest API va permite operatiuni de citire, scriere, actualizare si stergere a datelor, oferind acces facil la functionalitatile aplicatiei.
+o	Gestionarea Rețetelor: Utilizatorii vor putea sa vada, sa adauge, sa modifice si sa stearga retete din colectia lor personala. Aceasta functionalitate va asigura o experienta completa de gestionare a retetelor, permitandu-le utilizatorilor sa isi organizeze eficient colectiile.
+o	Interfata Web/Mobile: Aplicatia va fi accesibila atat de pe dispozitive desktop, cat si mobile, oferind o experienta optimizata pentru ambele platforme. Interfata va fi intuitive si usor de utilizat, permitand utilizatorilor sa navigheze si sa interactioneze cu aplicatia fara dificultati.
+Implementarea acestor cerinte va oferi o experienta complete si satisfacatoare utilizatorilor, facilitand gestionarea retetelor si indeplinind obiectivele proiectului.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Descriere API
+Tehnologii utilizate:
 
-## Learn More
+o	MongoDB: Pentru stocarea datelor, aplicatia foloseste o baza de date MongoDB, o baza de date NoSQL scalabila si flexibila ce contine retete de gatit cu diferite atribute.
+ 
+o	Postman: A fost utilizat pentru testarea si debugarea API-ului creat in aplicatie. Postman permite trimiterea de request-uri HTTP si analizarea raspunsurilor pentru a asigura functionalitatea corecta a API-ului.
 
-To learn more about Next.js, take a look at the following resources:
+ 
+o	Visual Studio Code: A fost mediul principal de dezvoltare, oferind un editor puternic și extensibil pentru cod sursa JavaScript si React, cu suport pentru integrarea cu diverse extensii utile pentru dezvoltarea web.
+ 
+o	Node.js: Backend-ul aplicației este dezvoltat în Node.js, un mediu de execuție JavaScript care permite rularea codului JavaScript pe server. Node.js a fost utilizat pentru a crea serverul API si pentru manipularea datelor din baza de date.
+o	Next.js: Framework-ul Next.js a fost utilizat pentru construirea aplicatiei web React. Next.js aduce o serie de avantaje, inclusiv server-side rendering (SSR), static site generation (SSG) si routing simplificat.
+o	Tailwind CSS: Stilizarea componentelor aplicației a fost realizata cu ajutorul framework-ului Tailwind CSS, care ofera o abordare de "utility-first" pentru definirea stilurilor CSS.
+o	Vercel: Aplicatia este gazduita pe platforma Vercel, care ofera hosting scalabil si gestionarea automata a infrastructurii pentru aplicatii web si a API-uri. Vercel permite, de asemenea, integrarea continua si livrarea continua (CI/CD) pentru a facilita procesul de dezvoltare și implementare.
+ 
+Flux de date
+Aplicatia foloseste mai multe metode HTTP pentru a gestiona datele:
+GET: Utilizata pentru a obtine datele din aplicatie. În cod, metoda getRecords este folosita pentru a face un request GET catre endpoint-ul /api/records pentru a obtine toate înregistrarile din baza de date.
+ 
+La metoda de mai sus se poate verifica in Postman raspunsul de acest request:  
+POST: Folosita pentru a crea o noua inregistrare in baza de date. Functia createRecord face un request POST catre acelasi endpoint /api/records, cu datele noii inregistar
+ 
+La metoda de mai sus se poate verifica in Postman raspunsul de la acest request: 
+ 
+PUT: Utilizata pentru a actualiza o înregistrare existenta. Functia updateRecord face un request PUT catre endpoint-ul /api/records cu datele actualizate ale înregistrarii.
+ 
+La metoda de mai sus se poate verifica in Postman raspunsul de la acest request:
+ 
+DELETE: Folosita pentru a sterge o inregistrare din baza de date. Funcția deleteRecord face un request DELETE catre endpoint-ul /api/records pentru a sterge inregistrarea cu ID-ul specificat.
+ 
+La metoda de mai sus se poate verifica in Postman raspunsul de la acest request:
+ 
+Aceste metode HTTP sunt esentiale pentru crearea, citirea, actualizarea si stergerea datelor (CRUD) în aplicatie. Prin intermediul lor, se interactioneaza cu serverul pentru a efectua diverse operatii asupra resurselor din baza de date.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Folosirea aplicatiei
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Pe ecranul principal al aplicatiei regasim numele acesteia, butonul “Found a new recipe? Share it with us!”, precum si toate retetele existente in baza de date expuse sub forma de carduri.
+Fiecare card cu reteta contine poza aferenta acesteia, precum si 3 butoane: “Read more”, “Update” si “Delete”.
+Pentru a adauga o reteta noua apasam pe butonul “Found a new recipe? Share it with us!” pozitionat deasupra cardurilor. Vom fi redirectionati catre pagina de create care ne permite sa adaugam datele pentru a popula o noua instanta de reteta.
+ 
+In continuare, vom completa campurile sugerate conform sugestiilor oferite in casute.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Butonul “Cancel” se utilizeaza pentru a reveni la pagina principala fara a introduce noua reteta in baza de date.
+Butonul “Post recipe” se foloseste de metoda POST si adauga noua inregistrare in baza de date, iar apoi aplicatia revine in pagina principala. In imaginea de mai jos se poate observa ca dupa apasarea acestui buton, reteta a fost adaugata(chenarul rosu).
+ 
+Butonul “Read more” present pe fiecare cartonas de reteta conduce la pagina de view a retetei. Aplicatia se foloseste de metoda getRecordById si metoda GET pentru a extrage din baza de date reteta cu id-ul cautat.
+ 
+Butonul “Go back to the recipe list” intoarce utilizatorul la pagina principala.
+Butonul “Update” present pe fiecare cartonas de reteta din pagina principala conduce la pagina de edit a aplicatiei, in care utilizatorul poate actualiza o reteta.
+Folosindu-se de metoda PUT, aplicatia modifica obiectul primit si dupa apasarea butonului “Post recipie” aflat la baza acestei pagini, actualizeaza instanta din baza de date.
+ 
+Putem verifica daca “Dinner” a fost adaugat la meal types folosindu-ne de pagina de view.
+Prin apasarea butonului “Delete” present pe fiecare cartonas de reteta, reteta este stearsa din baza de date.
+Inainte si dupa apasarea pe buton:
+ 
+ 
