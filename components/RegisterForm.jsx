@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 
-const Register = () => {
-  const router = useRouter();
+const RegisterForm = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -19,13 +17,9 @@ const Register = () => {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleCancel = () => {
-    router.push("/");
-  };
-
   return (
     <div className="min-h-screen bg-beige flex flex-col">
-      {/* Background cu text overlay */}
+      {/* Background with text overlay */}
       <div className="relative h-60 overflow-hidden p-4">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Register Background" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
@@ -120,14 +114,14 @@ const Register = () => {
         <div className="flex justify-center gap-4">
           <button
             type="button"
-            onClick={handleCancel}
+            onClick={onCancel}
             className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5"
           >
             Cancel
           </button>
           <button
             type="button"
-            onClick={() => console.log("To be implemented")}
+            onClick={() => onSubmit(formData)}
             className="text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5"
           >
             Sign Up
@@ -138,4 +132,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterForm;
