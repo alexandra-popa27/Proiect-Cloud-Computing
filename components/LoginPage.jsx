@@ -5,7 +5,7 @@ const LoginPage = () => {
   const router = useRouter();
 
   const handleLogin = () => {
-    router.push("/");
+    router.push("/main");
   };
 
   return (
