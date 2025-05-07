@@ -78,7 +78,7 @@ const LoginPage = () => {
         {/* Register */}
         <div className="w-full md:w-1/2 max-w-md bg-white p-6 rounded-xl shadow-md dark:bg-gray-800 flex flex-col justify-center items-center">
           <h2 className="text-xl font-medium text-center text-gray-700 mb-4 dark:text-white">
-            Don't have an account? <br /> Register here for unlimited cooking ideas!
+            You do not have an account? <br /> Register here for unlimited cooking ideas!
           </h2>
           <button
             type="button"
