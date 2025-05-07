@@ -5,8 +5,26 @@ const RegisterPage = () => {
   const router = useRouter();
 
   const handleSubmit = async (formData) => {
-    console.log("This will send data to backend later:", formData);
-    // Here we will add validation and backend request
+    try {
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        alert(json.error || "Registration failed.");
+        return;
+      }
+
+      alert("Account created successfully! You can now log in.");
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   const handleCancel = () => {
