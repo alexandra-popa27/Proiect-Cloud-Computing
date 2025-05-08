@@ -3,26 +3,34 @@ import { sendOk, sendBadRequest, sendMethodNotAllowed } from "@/utils/apiMethods
 
 const COLLECTION_NAME = "users";
 
-export default async function handler(req, res) {
+const getChefRequests = async () => {
   const collection = await getCollection(COLLECTION_NAME);
+  return collection.find({ checkChef: true }).toArray();
+};
 
+const promoteUser = async (email) => {
+  const collection = await getCollection(COLLECTION_NAME);
+  return collection.findOneAndUpdate(
+    { email },
+    { $set: { role: "chef", checkChef: false } },
+    { returnDocument: "after" }
+  );
+};
+
+export default async function handler(req, res) {
   if (req.method === "GET") {
-    const chefCandidates = await collection.find({ checkChef: true }).toArray();
-    return sendOk(res, chefCandidates);
+    const users = await getChefRequests();
+    return sendOk(res, users);
   }
 
   if (req.method === "PUT") {
     const { email } = req.body;
     if (!email) return sendBadRequest(res, "Email is required.");
 
-    const updated = await collection.findOneAndUpdate(
-        { email: { $regex: `^${email.trim()}$`, $options: "i" } },
-        { $set: { role: "chef", checkChef: false } },
-        { returnDocument: "after" } 
-      );
+    const result = await promoteUser(email);
+    if (!result?.value) return sendBadRequest(res, "User not found.");
 
-    if (!updated.value) return sendBadRequest(res, "User not found.");
-    return sendOk(res, updated.value);
+    return sendOk(res, result.value);
   }
 
   return sendMethodNotAllowed(res);
