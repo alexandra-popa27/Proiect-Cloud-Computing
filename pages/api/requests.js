@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     const updated = await collection.findOneAndUpdate(
       { email },
       { $set: { role: "chef", checkChef: false } },
-      { returnDocument: "after" }
+      { returnOriginal: false }
     );
 
     if (!updated.value) return sendBadRequest(res, "User not found.");
