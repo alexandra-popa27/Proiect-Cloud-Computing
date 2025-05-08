@@ -48,11 +48,11 @@ const RequestsPage = () => {
       });
   
       const json = await res.json();
+      console.log("Promote response:", json); 
   
-      if (json.success) {
-        // ✅ Update state properly
-        setUsers((prevUsers) => prevUsers.filter((u) => u.email !== email));
+      if (res.ok && json.success) {
         alert("User promoted to chef!");
+        fetchUsers(); 
       } else {
         alert(json.error || "Failed to promote.");
       }
