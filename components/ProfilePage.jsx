@@ -41,9 +41,9 @@ const ProfilePage = () => {
             className="w-32 h-32 rounded-full object-cover shadow-md border-2 border-white"
           />
           <div className="text-center md:text-left">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">{user.name}</h2>
-            <p className="text-sm text-gray-700 dark:text-gray-300">Posts: 0</p>
-            <p className="text-sm text-gray-700 dark:text-gray-300">Friends: 0</p>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-black mb-2">{user.name}</h2>
+            <p className="text-sm text-gray-700 dark:text-black">Posts: 0</p>
+            <p className="text-sm text-gray-700 dark:text-black">Friends: 0</p>
           </div>
         </div>
 
@@ -62,10 +62,13 @@ const ProfilePage = () => {
                 localStorage.removeItem("user");
                 router.push("/");
             }}
-            className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
-            >
+                className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
             Log Out
             </button>
+            <button type="button" onClick={() => alert("New post functionality coming soon!")}
+                className="text-white bg-pink-500 hover:bg-pink-600 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                New Post
+             </button>
         </div>
       </div>
 
