@@ -16,10 +16,10 @@ export default async function handler(req, res) {
     if (!email) return sendBadRequest(res, "Email is required.");
 
     const updated = await collection.findOneAndUpdate(
-      { email },
-      { $set: { role: "chef", checkChef: false } },
-      { returnOriginal: false }
-    );
+        { email: { $regex: `^${email.trim()}$`, $options: "i" } },
+        { $set: { role: "chef", checkChef: false } },
+        { returnDocument: "after" } 
+      );
 
     if (!updated.value) return sendBadRequest(res, "User not found.");
     return sendOk(res, updated.value);
