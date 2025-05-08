@@ -67,3 +67,11 @@ export default async function handler(req, res) {
 
   return sendMethodNotAllowed(res);
 }
+
+export const config = {
+    api: {
+      bodyParser: {
+        sizeLimit: "8mb", // supports larger profile pictures
+      },
+    },
+  };
