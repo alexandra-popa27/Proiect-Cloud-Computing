@@ -47,11 +47,11 @@ const RequestsPage = () => {
         body: JSON.stringify({ email }),
       });
       const json = await res.json();
-      if (res.ok) {
+      if (json.success) {
         setUsers(users.filter((u) => u.email !== email));
         alert("User promoted to chef!");
       } else {
-        alert(json.message || "Failed to promote.");
+        alert(json.error || "Failed to promote.");
       }
     } catch (err) {
       console.error(err);
