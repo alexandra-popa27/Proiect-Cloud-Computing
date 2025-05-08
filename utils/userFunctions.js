@@ -11,12 +11,12 @@ export const getChefRequests = async () => {
     }
   };
   
-  export const promoteUser = async (email) => {
+  export const promoteUser = async (id) => {
     try {
       const response = await fetch("/api/requests", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ id }),
       });
       const data = await response.json();
       return data;

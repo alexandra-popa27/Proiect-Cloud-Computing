@@ -26,11 +26,11 @@ const RequestsPage = () => {
     setUsers(fetchedUsers);
   };
 
-  const handlePromote = async (email) => {
+  const handlePromote = async (id) => {
     const confirmed = window.confirm("Are you sure you want to upgrade this user to professional chef?");
     if (!confirmed) return;
 
-    const result = await promoteUser(email);
+    const result = await promoteUser(id);
     if (result.success) {
       alert("User promoted!");
       await loadUsers(); // re-fetch list
@@ -58,7 +58,7 @@ const RequestsPage = () => {
             <p className="text-sm text-gray-700">{user.email}</p>
             <p className="text-sm text-gray-700 mb-3">{user.phone}</p>
             <button
-              onClick={() => handlePromote(user.email)}
+              onClick={() => handlePromote(user._id)}
               className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2"
             >
               Promote to chef

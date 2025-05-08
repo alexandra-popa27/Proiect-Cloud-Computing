@@ -1,5 +1,6 @@
 import { getCollection } from "@/utils/functions";
 import { sendOk, sendBadRequest, sendMethodNotAllowed } from "@/utils/apiMethods";
+import { ObjectId } from "mongodb";
 
 const COLLECTION_NAME = "users";
 
@@ -8,10 +9,10 @@ const getChefRequests = async () => {
   return collection.find({ checkChef: true }).toArray();
 };
 
-const promoteUser = async (email) => {
+const promoteUser = async (id) => {
   const collection = await getCollection(COLLECTION_NAME);
   return collection.findOneAndUpdate(
-    { email },
+    { _id: new ObjectId(id) },
     { $set: { role: "chef", checkChef: false } },
     { returnDocument: "after" }
   );
@@ -24,11 +25,9 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "PUT") {
-    const { email } = req.body;
-    if (!email) return sendBadRequest(res, "Email is required.");
-
-    const result = await promoteUser(email);
-    if (!result?.value) return sendBadRequest(res, "User not found.");
+    const { id } = req.body;
+    if (!id) return sendBadRequest(res, "User ID is required.");
+    const result = await promoteUser(id);
 
     return sendOk(res, result.value);
   }
