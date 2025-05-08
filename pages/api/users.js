@@ -36,7 +36,7 @@ export default async function handler(req, res) {
       password: hashedPassword,
       checkChef: Boolean(checkChef),
       role: "generic",
-      profilePicture: "",
+      profilePicture: "/profile_icon.jpg",
       createdAt: new Date(),
     });
 

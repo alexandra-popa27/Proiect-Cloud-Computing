@@ -93,7 +93,7 @@ const RegisterForm = ({ onSubmit, onCancel }) => {
             onChange={(e) => handleChange("checkChef", e.target.checked)}
             className="mt-1"
           />
-          <label htmlFor="checkChef" className="ml-2 text-sm">
+          <label htmlFor="checkChef" className="ml-2 text-sm text-white">
             If you are joining this platform as a professional chef, please check this box. Please be informed you will be verified by one of our administrators.
           </label>
         </div>
