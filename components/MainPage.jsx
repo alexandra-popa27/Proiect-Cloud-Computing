@@ -68,7 +68,7 @@ const MainPage = () => {
         </div>
       </div>
 
-      {user?.role === "admin" && (
+      {user?.role === "chef" && (
         <div className="p-4 flex flex-wrap justify-center">
           <button
             type="button"
@@ -109,7 +109,9 @@ const MainPage = () => {
               >
                 Read more
               </a>
-              {user?.role === "admin" && (
+
+              {/* Chef can edit/delete their own records */}
+              {user?.role === "chef" && record.chefName === user.name && (
                 <>
                   <button
                     type="button"
@@ -126,6 +128,17 @@ const MainPage = () => {
                     Delete
                   </button>
                 </>
+              )}
+
+              {/* Admin can only delete */}
+              {user?.role === "admin" && (
+                <button
+                  type="button"
+                  className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                  onClick={() => handleDeleteRecord(record._id)}
+                >
+                  Delete
+                </button>
               )}
             </div>
           </div>
