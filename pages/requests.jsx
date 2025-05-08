@@ -39,16 +39,19 @@ const RequestsPage = () => {
   const handlePromote = async (email) => {
     const confirm = window.confirm("Are you sure you want to upgrade this user to professional chef?");
     if (!confirm) return;
-
+  
     try {
       const res = await fetch("/api/requests", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
+  
       const json = await res.json();
+  
       if (json.success) {
-        setUsers(users.filter((u) => u.email !== email));
+        // ✅ Update state properly
+        setUsers((prevUsers) => prevUsers.filter((u) => u.email !== email));
         alert("User promoted to chef!");
       } else {
         alert(json.error || "Failed to promote.");
