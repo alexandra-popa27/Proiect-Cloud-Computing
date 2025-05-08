@@ -5,26 +5,22 @@ import { hash } from "bcryptjs";
 const COLLECTION_NAME = "users";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return sendMethodNotAllowed(res);
-  }
+  const collection = await getCollection(COLLECTION_NAME);
 
-  const { name, phone, email, password, confirmPassword, checkChef } = req.body;
+  if (req.method === "POST") {
+    const { name, phone, email, password, confirmPassword, checkChef } = req.body;
 
-  if (!name || !phone || !email || !password || !confirmPassword) {
-    return sendBadRequest(res, "All fields are required.");
-  }
+    if (!name || !phone || !email || !password || !confirmPassword) {
+      return sendBadRequest(res, "All fields are required.");
+    }
 
-  if (password !== confirmPassword) {
-    return sendBadRequest(res, "Passwords do not match.");
-  }
+    if (password !== confirmPassword) {
+      return sendBadRequest(res, "Passwords do not match.");
+    }
 
-  if (password.length < 6) {
-    return sendBadRequest(res, "Password must be at least 6 characters.");
-  }
-
-  try {
-    const collection = await getCollection(COLLECTION_NAME);
+    if (password.length < 6) {
+      return sendBadRequest(res, "Password must be at least 6 characters.");
+    }
 
     const existingUser = await collection.findOne({ email });
     if (existingUser) {
@@ -45,8 +41,28 @@ export default async function handler(req, res) {
     });
 
     return sendOk(res, { userId: result.insertedId });
-  } catch (error) {
-    console.error(error);
-    return sendBadRequest(res, "Internal server error.");
   }
+
+  // ✅ UPDATE logic for Edit Profile
+  else if (req.method === "PUT") {
+    const { name, phone, email, profilePicture } = req.body;
+
+    if (!name || !phone || !email) {
+      return sendBadRequest(res, "Name, phone, and email are required.");
+    }
+
+    const updated = await collection.findOneAndUpdate(
+      { email },
+      { $set: { name, phone, profilePicture } },
+      { returnDocument: "after" }
+    );
+
+    if (!updated.value) {
+      return sendBadRequest(res, "User not found.");
+    }
+
+    return sendOk(res, updated.value);
+  }
+
+  return sendMethodNotAllowed(res);
 }
