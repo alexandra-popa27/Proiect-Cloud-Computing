@@ -99,11 +99,24 @@ const MainPage=()=>{
                 ))}
             </div>
 
+            {/* Bottom navigation */}
             <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 border-t border-gray-700 z-50">
-                <button className="text-sm hover:text-yellow-400">Profile</button>
-                <button className="text-sm hover:text-yellow-400">Feed</button>
-                <button className="text-sm hover:text-yellow-400">Requests</button>
-                <button className="text-sm hover:text-yellow-400">CookAId</button>
+            <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
+                <img src="/profile_icon.jpg" alt="Profile" className="w-5 h-5 rounded-full" />
+                Profile
+            </button>
+            <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
+                <img src="/feed_icon.png" alt="Feed" className="w-5 h-5 rounded-full" />
+                Feed
+            </button>
+            <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
+                <img src="/request_icon.jpg" alt="Requests" className="w-5 h-5 rounded-full" />
+                Requests
+            </button>
+            <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
+                <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" />
+                CookAId
+            </button>
             </div>
 
         </div>
