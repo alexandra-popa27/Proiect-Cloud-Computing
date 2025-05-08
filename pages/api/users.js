@@ -43,25 +43,26 @@ export default async function handler(req, res) {
     return sendOk(res, { userId: result.insertedId });
   }
 
-  // ✅ UPDATE logic for Edit Profile
   else if (req.method === "PUT") {
     const { name, phone, email, profilePicture } = req.body;
-
+  
     if (!name || !phone || !email) {
       return sendBadRequest(res, "Name, phone, and email are required.");
     }
-
-    const updated = await collection.findOneAndUpdate(
-      { email },
-      { $set: { name, phone, profilePicture } },
-      { returnDocument: "after" }
-    );
-
-    if (!updated.value) {
+  
+    const existingUser = await collection.findOne({ email });
+    if (!existingUser) {
       return sendBadRequest(res, "User not found.");
     }
-
-    return sendOk(res, updated.value);
+  
+    await collection.updateOne(
+      { email },
+      { $set: { name, phone, profilePicture } }
+    );
+  
+    const updatedUser = await collection.findOne({ email });
+  
+    return sendOk(res, updatedUser);
   }
 
   return sendMethodNotAllowed(res);
