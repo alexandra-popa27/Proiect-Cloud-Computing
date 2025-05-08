@@ -36,12 +36,16 @@ export const getRecordById = async (id) => {
 
 export const createRecord = async (entry) => {
     try {
+
+        const user = JSON.parse(localStorage.getItem("user"));
+		const entryWithChef = { ...entry, chefName: user?.name || "Unknown" };
+
         const response = await fetch("/api/records", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(entry),
+            body: JSON.stringify(entryWithChef),
         });
 
         const data = await response.json();

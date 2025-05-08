@@ -75,7 +75,7 @@ const RequestsPage = () => {
         <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
           <img src="/feed_icon.png" alt="Feed" className="w-5 h-5 rounded-full" /> Feed
         </button>
-        <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
+        <button onClick={() => router.push("/main")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
           <img src="/recipie_icon.jpg" alt="Recipes" className="w-5 h-5 rounded-full" /> Recipes
         </button>
         <button className="flex items-center gap-2 text-sm hover:text-yellow-400">

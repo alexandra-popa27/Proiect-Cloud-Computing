@@ -81,7 +81,7 @@ const ProfilePage = () => {
           <img src="/feed_icon.png" alt="Feed" className="w-5 h-5 rounded-full" />
           Feed
         </button>
-        <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
+        <button onClick={() => router.push("/requests")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
           <img src="/request_icon.jpg" alt="Requests" className="w-5 h-5 rounded-full" />
           Requests
         </button>

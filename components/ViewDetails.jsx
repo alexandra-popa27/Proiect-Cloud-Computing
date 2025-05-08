@@ -19,6 +19,12 @@ const ViewDetails=(props)=>{
                 </div>
             </div>
             <div className="mb-5">
+                <label className="block text-sm font-bold text-gray-700">Chef</label>
+                <div className="text-sm text-gray-900 bg-transparent border-b-2 border-gray-300">
+                    {data.chefName || "Unknown"}
+                </div>
+            </div>
+            <div className="mb-5">
                 <label htmlFor="ingredients" className="block text-sm font-bold text-gray-700">
                     Ingredients
                 </label>

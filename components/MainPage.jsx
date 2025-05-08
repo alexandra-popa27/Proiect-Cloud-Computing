@@ -99,6 +99,8 @@ const MainPage = () => {
                 {`${record.cuisine} cuisine`}
                 <br />
                 Difficulty: {record.difficulty}
+                <br />
+                Chef: {record.chefName || "Unknown"}
               </p>
               <a
                 href="#"
