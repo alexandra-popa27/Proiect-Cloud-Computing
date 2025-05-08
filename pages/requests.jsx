@@ -24,10 +24,11 @@ const RequestsPage = () => {
     try {
       const res = await fetch("/api/requests");
       const json = await res.json();
+      console.log("Fetched users data:", json);
       if (json.success) {
         setUsers(json.data);
       } else {
-        alert(json.message);
+        alert(json.message || "Failed to load chef requests."); // safer fallback
       }
     } catch (err) {
       console.error(err);
