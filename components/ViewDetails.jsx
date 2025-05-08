@@ -7,7 +7,7 @@ const ViewDetails=(props)=>{
     const[data]=useState(entry);
 
     const handleBack = () => {
-        router.push("/");
+        router.push("/main");
     }
 
     return(

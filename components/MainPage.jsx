@@ -98,6 +98,14 @@ const MainPage=()=>{
                     </div>
                 ))}
             </div>
+
+            <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 border-t border-gray-700 z-50">
+                <button className="text-sm hover:text-yellow-400">Profile</button>
+                <button className="text-sm hover:text-yellow-400">Feed</button>
+                <button className="text-sm hover:text-yellow-400">Requests</button>
+                <button className="text-sm hover:text-yellow-400">CookAId</button>
+            </div>
+
         </div>
     )
 }

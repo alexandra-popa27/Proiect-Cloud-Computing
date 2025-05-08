@@ -11,7 +11,8 @@ const Create=()=>{
         try {
             const response=await createRecord(data);
             if(response){
-                router.push("/");
+                alert("Recipe added!");
+                router.push("/main");
             }
         } catch (error) {
             console.log(error)

@@ -26,6 +26,9 @@ const LoginPage = () => {
         alert(json.error || "Login failed.");
         return;
       }
+
+      //save user in localStorage
+      localStorage.setItem("user", JSON.stringify(json.data));
   
       alert(`Welcome, ${json.data.name}!`);
       router.push("/main");

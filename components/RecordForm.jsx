@@ -18,7 +18,7 @@ const RecordForm =(props)=>{
     }
 
     const handleCancel = () => {
-        router.push("/");
+        router.push("/main");
     }
     
     const handleIngredientsChange = (value) => {
