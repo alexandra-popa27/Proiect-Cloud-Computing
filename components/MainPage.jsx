@@ -8,6 +8,7 @@ const MainPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchRecords();
@@ -53,6 +54,12 @@ const MainPage = () => {
     router.push(`/view?id=${id}`);
   };
 
+  // Filtrare în funcție de searchQuery
+  const filteredData = data.filter(record =>
+    record.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (record.chefName || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (isLoading) return <Spinner />;
 
   return (
@@ -68,6 +75,16 @@ const MainPage = () => {
         </div>
       </div>
 
+      <div className="p-4 flex justify-center">
+        <input
+            type="text"
+            placeholder="Search recipe or chef"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-500"
+            />
+        </div>
+
       {user?.role === "chef" && (
         <div className="p-4 flex flex-wrap justify-center">
           <button
@@ -81,7 +98,7 @@ const MainPage = () => {
       )}
 
       <div className="p-4 flex flex-wrap justify-center gap-4">
-        {data?.map((record) => (
+        {filteredData?.map((record) => (
           <div
             key={record._id}
             className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"

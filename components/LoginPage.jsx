@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import Spinner from "./Spinner";
 
 const LoginPage = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
       alert("Please enter both email and password.");
       return;
     }
+
+    setIsLoading(true);
   
     try {
       const res = await fetch("/api/login", {
@@ -30,7 +34,6 @@ const LoginPage = () => {
       //save user in localStorage
       localStorage.setItem("user", JSON.stringify(json.data));
   
-      alert(`Welcome, ${json.data.name}!`);
       router.push("/main");
     } catch (error) {
       console.error(error);
@@ -41,6 +44,8 @@ const LoginPage = () => {
   const handleRegisterRedirect = () => {
     router.push("/register");
   };
+
+  if (isLoading) return <Spinner />;
 
   return (
     <div className="min-h-screen bg-beige flex flex-col">
