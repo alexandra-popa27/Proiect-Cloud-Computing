@@ -24,13 +24,13 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-beige flex flex-col">
-      {/* Image + text overlay */}
-      <div className="relative h-60 overflow-hidden p-4">
-        <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Profile Background" />
-        <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
-          My Profile
-        </div>
-      </div>
+      {/* Image with text overlay */}
+      <div className="relative h-96 overflow-hidden p-4">
+            <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Cooking Hub Background" />
+            <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
+                The Cooking Hub - My Profile
+            </div>
+            </div>
 
       {/* Profile info */}
       <div className="flex flex-col items-center justify-center mt-10 px-4">
@@ -42,9 +42,30 @@ const ProfilePage = () => {
           />
           <div className="text-center md:text-left">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">{user.name}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300">Posts: 0</p>
-            <p className="text-sm text-gray-600 dark:text-gray-300">Friends: 0</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Posts: 0</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">Friends: 0</p>
           </div>
+        </div>
+
+        {/* Buttons under profile */}
+        <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+            type="button"
+            onClick={() => alert("Edit profile coming soon!")}
+            className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
+            >
+            Edit Profile
+            </button>
+            <button
+            type="button"
+            onClick={() => {
+                localStorage.removeItem("user");
+                router.push("/");
+            }}
+            className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
+            >
+            Log Out
+            </button>
         </div>
       </div>
 

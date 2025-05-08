@@ -110,8 +110,7 @@ const LoginPage = () => {
           <button
             type="button"
             onClick={handleRegisterRedirect}
-            className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
-          >
+            className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
             Register
           </button>
         </div>
