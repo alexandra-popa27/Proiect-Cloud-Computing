@@ -40,6 +40,7 @@ export default async function handler(req, res) {
       password: hashedPassword,
       checkChef: Boolean(checkChef),
       role: "generic",
+      profilePicture: "",
       createdAt: new Date(),
     });
 

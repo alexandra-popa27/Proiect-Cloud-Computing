@@ -101,7 +101,7 @@ const MainPage=()=>{
 
             {/* Bottom navigation */}
             <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 border-t border-gray-700 z-50">
-            <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
+            <button onClick={() => router.push("/profile")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
                 <img src="/profile_icon.jpg" alt="Profile" className="w-5 h-5 rounded-full" />
                 Profile
             </button>
