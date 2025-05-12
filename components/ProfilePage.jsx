@@ -22,8 +22,8 @@ const ProfilePage = () => {
       const res = await fetch("/api/posts");
       const allPosts = await res.json();
       console.log("allPosts:", allPosts);
-      
-      const userPosts = allPosts.data.filter((post) => {
+
+      const userPosts = allPosts.data.data.filter((post) => {
         if (typeof post.authorId === "object") {
           return post.authorId.$oid === userId || post.authorId === userId;
         }
