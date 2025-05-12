@@ -12,6 +12,7 @@ const NewPostPage = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
+      console.log(" User from localStorage in new-post.jsx:", parsed);
       if (parsed.role === "admin") {
         router.push("/profile");
       } else {
@@ -47,6 +48,7 @@ const NewPostPage = () => {
     };
 
     console.log("Post being sent:", post);
+    console.log("user._id:", user._id);
 
     const response = await fetch("/api/posts", {
       method: "POST",
