@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Spinner from "./Spinner";
 
 const ViewPostPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const [post, setPost] = useState(null);
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
       setUser(JSON.parse(stored));
     }
-  
+
     if (!id) return;
 
-  
+    setIsLoading(true);
     fetch(`/api/posts?id=${id}`)
       .then(res => res.json())
       .then(data => {
-        setPost(data.data.data);
+        setPost(data.data.data || data.data); // fallback pentru ambele formate
+        setIsLoading(false);
       })
-      .catch(err => console.error("Failed to fetch post:", err));
+      .catch(err => {
+        console.error("Failed to fetch post:", err);
+        setIsLoading(false);
+      });
   }, [id]);
 
   const handleDelete = async () => {
@@ -39,7 +45,7 @@ const ViewPostPage = () => {
     }
   };
 
-  if (!post) return <p className="p-6">Loading...</p>;
+  if (isLoading || !post) return <Spinner />;
 
   return (
     <div className="min-h-screen bg-beige flex flex-col overflow-y-auto pb-24">
