@@ -27,9 +27,21 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "GET") {
-        const posts = await collection.find().toArray();
-        return sendOk(res, { data: posts });
-    }
+        const { id } = req.query;
+    
+        if (id) {
+          try {
+            const post = await collection.findOne({ _id: new ObjectId(id) });
+            if (!post) return sendBadRequest(res, "Post not found.");
+            return sendOk(res, { data: post });
+          } catch (error) {
+            return sendBadRequest(res, "Invalid post ID format.");
+          }
+        } else {
+          const posts = await collection.find().toArray();
+          return sendOk(res, { data: posts });
+        }
+      }
 
     if (req.method === "DELETE") {
         const { id } = req.query;
@@ -40,6 +52,8 @@ export default async function handler(req, res) {
       
         return sendOk(res, { deletedCount: result.deletedCount });
     }
+
+
   
     return sendMethodNotAllowed(res);
   }
