@@ -42,7 +42,7 @@ const ProfilePage = () => {
     : "/profile_icon.jpg";
 
   return (
-    <div className="min-h-screen bg-beige flex flex-col">
+    <div className="min-h-screen bg-beige flex flex-col overflow-y-auto">
       <div className="relative h-96 overflow-hidden p-4">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Cooking Hub Background" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
