@@ -19,12 +19,12 @@ const ViewPostPage = () => {
 
     setIsLoading(true);
     fetch(`/api/posts?id=${id}`)
-      .then(res => res.json())
-      .then(data => {
-        setPost(data.data.data || data.data); // fallback pentru ambele formate
+      .then((res) => res.json())
+      .then((data) => {
+        setPost(data.data.data || data.data); // support both response shapes
         setIsLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Failed to fetch post:", err);
         setIsLoading(false);
       });
@@ -81,15 +81,50 @@ const ViewPostPage = () => {
           </p>
           <p className="text-sm text-gray-500">Posted on: {new Date(post.createdAt).toLocaleString()}</p>
 
-          {user?._id === post.authorId && (
+          <div className="flex gap-4 mt-4">
             <button
-              onClick={handleDelete}
-              className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4"
+              onClick={() => router.push("/profile")}
+              className="text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
             >
-              Delete Post
+              Back to Profile
             </button>
-          )}
+
+            {user?._id === post.authorId && (
+              <button
+                onClick={handleDelete}
+                className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
+              >
+                Delete Post
+              </button>
+            )}
+          </div>
         </div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 border-t border-gray-700 z-50">
+        <button
+          onClick={() => router.push("/main")}
+          className="flex items-center gap-2 text-sm hover:text-yellow-400"
+        >
+          <img src="/recipie_icon.jpg" alt="Recipies" className="w-5 h-5 rounded-full" />
+          Recipies
+        </button>
+        <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
+          <img src="/feed_icon.png" alt="Feed" className="w-5 h-5 rounded-full" />
+          Feed
+        </button>
+        <button
+          onClick={() => router.push("/requests")}
+          className="flex items-center gap-2 text-sm hover:text-yellow-400"
+        >
+          <img src="/request_icon.jpg" alt="Requests" className="w-5 h-5 rounded-full" />
+          Requests
+        </button>
+        <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
+          <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" />
+          CookAId
+        </button>
       </div>
     </div>
   );
