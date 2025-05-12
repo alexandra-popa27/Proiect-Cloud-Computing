@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
-const CLOUD_NAME = "razvancloud"; // Înlocuiește cu numele tău real
-const UPLOAD_PRESET = "unsigned_upload"; // Înlocuiește cu presetul din Cloudinary
+const CLOUD_NAME = "dqxhye6sv";
+const UPLOAD_PRESET = "unsigned_upload";
 
 const NewPostPage = () => {
   const [description, setDescription] = useState("");
@@ -32,14 +32,25 @@ const NewPostPage = () => {
     formData.append("file", file);
     formData.append("upload_preset", UPLOAD_PRESET);
     formData.append("folder", "posts");
-
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-    return data.secure_url;
+  
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: "POST",
+        body: formData,
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        console.error("Upload failed:", data);
+        return null;
+      }
+  
+      return data.secure_url;
+    } catch (error) {
+      console.error("Upload error:", error);
+      return null;
+    }
   };
 
   const handlePost = async () => {
@@ -48,7 +59,9 @@ const NewPostPage = () => {
     const uploadedUrls = [];
     for (const img of images) {
       const url = await uploadToCloudinary(img);
-      uploadedUrls.push(url);
+      if (url) {
+        uploadedUrls.push(url);
+      }
     }
 
     const post = {
