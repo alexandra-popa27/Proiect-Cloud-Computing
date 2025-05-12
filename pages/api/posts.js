@@ -6,7 +6,7 @@ const COLLECTION_NAME = "posts";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const post = req.body;
-    if (!post.description || !post.images?.length || !post.authorName || !post.authorId) {
+    if (!post.description || !post.images?.length || !post.authorId) {
         return sendBadRequest(res, "Missing required fields.");
     }
 

@@ -28,6 +28,7 @@ const LoginPage = () => {
   
       if (!res.ok) {
         alert(json.error || "Login failed.");
+        setIsLoading(false);
         return;
       }
 
@@ -38,6 +39,7 @@ const LoginPage = () => {
     } catch (error) {
       console.error(error);
       alert("Something went wrong. Please try again.");
+      setIsLoading(false);
     }
   };
 
