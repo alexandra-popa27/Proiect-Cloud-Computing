@@ -22,6 +22,10 @@ export default async function handler(req, res) {
       return sendBadRequest(res, "Password must be at least 6 characters.");
     }
 
+    if (!/\d/.test(password)) {
+      return sendBadRequest(res, "Password must contain at least one digit.");
+    }
+
     const existingUser = await collection.findOne({ email });
     if (existingUser) {
       return sendUnauthorized(res, "This email is already registered.");

@@ -57,10 +57,12 @@ const ProfilePage = () => {
               className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
                 Log Out
             </button>
-            <button type="button" onClick={() => router.push("/new-post")}
+            {user.role !== "admin" && (
+              <button type="button" onClick={() => router.push("/new-post")}
               className="text-white bg-pink-500 hover:bg-pink-600 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-lg text-sm px-5 py-2.5">
                 New Post
-            </button>
+              </button>
+            )}
         </div>
       </div>
 
