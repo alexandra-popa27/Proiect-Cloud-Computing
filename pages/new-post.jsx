@@ -90,14 +90,14 @@ const NewPostPage = () => {
         />
 
         <div className="flex flex-wrap gap-4 justify-center mt-4">
-          {imagePreviews.map((src, idx) => (
+        {imagePreviews.map((src, idx) => (
             <div
-              key={idx}
-              className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+            key={idx}
+            className="max-w-sm w-80 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
             >
-              <img src={src} alt={`Preview ${idx}`} className="rounded-t-lg" />
+            <img src={src} alt={`Preview ${idx}`} className="w-full h-48 object-cover rounded-t-lg" />
             </div>
-          ))}
+        ))}
         </div>
 
         <div className="flex gap-4">

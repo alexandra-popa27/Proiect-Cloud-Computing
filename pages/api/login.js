@@ -30,12 +30,13 @@ export default async function handler(req, res) {
 
     // Doar ce ai nevoie mai departe (fără parolă)
     return sendOk(res, {
+        _id: user._id.toString(),
         name: user.name,
         role: user.role,
         checkChef: user.checkChef,
         email: user.email,
-        phone: user.phone || "", // ✅ Add this line
-        profilePicture: user.profilePicture || "" // also good to include
+        phone: user.phone || "",
+        profilePicture: user.profilePicture || ""
     });
   } catch (error) {
     console.error(error);
