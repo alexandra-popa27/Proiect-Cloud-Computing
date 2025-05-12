@@ -21,7 +21,12 @@ const ProfilePage = () => {
     try {
       const res = await fetch("/api/posts");
       const allPosts = await res.json();
-      const userPosts = allPosts.data.filter((post) => post.authorId === userId);
+      const userPosts = allPosts.data.filter((post) => {
+        if (typeof post.authorId === "object") {
+          return post.authorId.$oid === userId || post.authorId === userId;
+        }
+        return post.authorId === userId;
+      });
       setPosts(userPosts);
     } catch (error) {
       console.error("Failed to fetch posts:", error);
