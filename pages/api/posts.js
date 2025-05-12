@@ -30,11 +30,14 @@ export default async function handler(req, res) {
         const { id } = req.query;
     
         if (id) {
+            console.log("GET /api/posts with id:", id); 
           try {
             const post = await collection.findOne({ _id: new ObjectId(id) });
+            console.log("Found post:", post);
             if (!post) return sendBadRequest(res, "Post not found.");
             return sendOk(res, { data: post });
           } catch (error) {
+            console.error("Invalid post ID format or fetch error:", error);
             return sendBadRequest(res, "Invalid post ID format.");
           }
         } else {
