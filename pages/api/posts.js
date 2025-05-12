@@ -7,6 +7,7 @@ const COLLECTION_NAME = "posts";
 export default async function handler(req, res) {
     
     const collection = await getCollection(COLLECTION_NAME);
+    console.log("req.query:", req.query);
     
     if (req.method === "POST") {
       const post = req.body;

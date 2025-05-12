@@ -12,15 +12,18 @@ const ViewPostPage = () => {
     if (stored) {
       setUser(JSON.parse(stored));
     }
-
-    if (id) {
-        console.log("Fetching post with id:", id);
-
-      fetch(`/api/posts?id=${id}`)
-        .then(res => res.json())
-        .then(data => setPost(data.data))
-        .catch(err => console.error("Failed to fetch post:", err));
-    }
+  
+    if (!id) return;
+  
+    console.log(" Fetching post with id:", id);
+  
+    fetch(`/api/posts?id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(" Received post data:", data);
+        setPost(data.data);
+      })
+      .catch(err => console.error("Failed to fetch post:", err));
   }, [id]);
 
   const handleDelete = async () => {
