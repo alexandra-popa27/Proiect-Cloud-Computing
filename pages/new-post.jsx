@@ -36,17 +36,17 @@ const NewPostPage = () => {
   const handlePost = async () => {
     if (!description || images.length === 0 || !user) return;
 
-    console.log("Author ID:", user._id);
-
-    const imageUrls = imagePreviews; // In real app, you'd upload and get URLs
+    const imageUrls = imagePreviews;
 
     const post = {
-      authorId: user._id,
+      authorId: user._id?.toString?.() || user._id,
       description,
       images: imageUrls,
       likes: [],
       comments: [],
     };
+
+    console.log("Post being sent:", post);
 
     const response = await fetch("/api/posts", {
       method: "POST",
