@@ -36,6 +36,8 @@ const NewPostPage = () => {
   const handlePost = async () => {
     if (!description || images.length === 0 || !user) return;
 
+    console.log("Author ID:", user._id);
+
     const imageUrls = imagePreviews; // In real app, you'd upload and get URLs
 
     const post = {
