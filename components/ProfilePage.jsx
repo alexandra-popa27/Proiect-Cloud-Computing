@@ -21,7 +21,6 @@ const ProfilePage = () => {
     try {
       const res = await fetch("/api/posts");
       const allPosts = await res.json();
-      console.log("allPosts:", allPosts);
 
       const userPosts = allPosts.data.data.filter((post) => {
         if (typeof post.authorId === "object") {
@@ -87,7 +86,7 @@ const ProfilePage = () => {
       {posts.map((post) => (
         <div
           key={post._id}
-          onClick={() => router.push(`/view-post?id=${post._id}`)}
+          onClick={() => { console.log("Clicked post ID:", post._id); router.push(`/view-post?id=${post._id}`)}}
           className="cursor-pointer max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:shadow-lg transition-shadow"
         >
           <img src={post.images[0]} alt="Post" className="rounded-t-lg w-full h-48 object-cover" />

@@ -14,6 +14,8 @@ const ViewPostPage = () => {
     }
 
     if (id) {
+        console.log("Fetching post with id:", id);
+
       fetch(`/api/posts?id=${id}`)
         .then(res => res.json())
         .then(data => setPost(data.data))
