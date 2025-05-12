@@ -68,59 +68,63 @@ const NewPostPage = () => {
         </div>
       </div>
 
-      <div className="flex flex-col items-center p-6 gap-4">
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Write something about your post..."
-          className="w-full max-w-xl border border-gray-300 rounded-md p-3 focus:outline-none focus:ring focus:border-blue-500"
-          rows={4}
-        />
-
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handleImageChange}
-          className="w-full max-w-xl"
-        />
-
-        <div className="flex flex-wrap gap-4 justify-center mt-4">
-        {imagePreviews.map((src, idx) => (
-            <div
-            key={idx}
-            className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
-            >
-            <img
-                src={src}
-                alt={`Preview ${idx}`}
-                className="rounded-t-lg w-[320px] h-[200px] object-cover"
-            />
+      <div className="flex flex-col lg:flex-row justify-center items-start gap-8 px-6 py-8">
+            {/* Stânga: Imagine + Upload */}
+            <div className="flex flex-col items-center w-full lg:w-1/2 gap-4">
+                <h3 className="text-lg font-semibold text-black">Add your picture here:</h3>
+                <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+                className="w-full max-w-sm"
+                />
+                <div className="flex flex-wrap gap-4 justify-center">
+                {imagePreviews.map((src, idx) => (
+                    <div
+                    key={idx}
+                    className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+                    >
+                    <img
+                        src={src}
+                        alt={`Preview ${idx}`}
+                        className="rounded-t-lg w-[320px] h-[200px] object-cover"
+                    />
+                    </div>
+                ))}
+                </div>
             </div>
-        ))}
-        </div>
 
-        <div className="flex gap-4">
-          <button
-            onClick={handleCancel}
-            className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-          >
-            Cancel
-          </button>
-
-          <button
-            onClick={handlePost}
-            disabled={!description || images.length === 0}
-            className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 ${
-              !description || images.length === 0
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300"
-            }`}
-          >
-            Post
-          </button>
+            {/* Dreapta: Descriere + Butoane */}
+            <div className="flex flex-col w-full lg:w-1/2 gap-4">
+                <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Write something about your post..."
+                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring focus:border-blue-500"
+                rows={6}
+                />
+                <div className="flex gap-4">
+                <button
+                    onClick={handleCancel}
+                    className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                >
+                    Cancel
+                </button>
+                <button
+                    onClick={handlePost}
+                    disabled={!description || images.length === 0}
+                    className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 ${
+                    !description || images.length === 0
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300"
+                    }`}
+                >
+                    Post
+                </button>
+                </div>
+            </div>
         </div>
-      </div>
 
       <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 border-t border-gray-700 z-50">
         <button onClick={() => router.push("/main")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
