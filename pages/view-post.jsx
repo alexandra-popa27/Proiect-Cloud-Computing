@@ -40,6 +40,7 @@ const ViewPostPage = () => {
 
   return (
     <div className="min-h-screen bg-beige flex flex-col overflow-y-auto pb-24">
+      {/* Background banner */}
       <div className="relative h-96 overflow-hidden p-4">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Background" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
@@ -47,17 +48,28 @@ const ViewPostPage = () => {
         </div>
       </div>
 
+      {/* Post content */}
       <div className="flex flex-col lg:flex-row justify-center items-start gap-8 px-6 py-8">
-        {/* Stânga: Imagine */}
+        {/* Left: Image */}
         <div className="flex flex-col items-center w-full lg:w-1/2 gap-4">
           <h3 className="text-lg font-semibold text-black">Picture:</h3>
-          <img src={post.images[0]} alt="Post" className="rounded-lg w-full max-w-xl object-contain border" />
+          {post.images?.length > 0 ? (
+            <img
+              src={post.images[0]}
+              alt="Post"
+              className="rounded-lg w-full max-w-xl object-contain border"
+            />
+          ) : (
+            <p className="text-sm text-gray-500 italic">No image available</p>
+          )}
         </div>
 
-        {/* Dreapta: Descriere + Buton delete dacă e autorul */}
+        {/* Right: Description and controls */}
         <div className="flex flex-col w-full lg:w-1/2 gap-4">
           <h3 className="text-lg font-semibold text-black">Description:</h3>
-          <p className="border border-gray-300 rounded-md p-4 bg-white shadow text-gray-800">{post.description}</p>
+          <p className="border border-gray-300 rounded-md p-4 bg-white shadow text-gray-800">
+            {post.description || "No description provided."}
+          </p>
           <p className="text-sm text-gray-500">Posted on: {new Date(post.createdAt).toLocaleString()}</p>
 
           {user?._id === post.authorId && (
