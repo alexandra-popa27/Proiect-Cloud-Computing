@@ -5,10 +5,12 @@ import { ObjectId } from "mongodb";
 const COLLECTION_NAME = "posts";
 
 export default async function handler(req, res) {
+    
+    const collection = await getCollection(COLLECTION_NAME);
+    
     if (req.method === "POST") {
       const post = req.body;
   
-      // Validare inițială
       if (!post.description || !post.images?.length || !post.authorId) {
         return sendBadRequest(res, "Missing required fields.");
       }
@@ -22,6 +24,11 @@ export default async function handler(req, res) {
       const collection = await getCollection(COLLECTION_NAME);
       const result = await collection.insertOne(post);
       return sendOk(res, result);
+    }
+
+    if (req.method === "GET") {
+        const posts = await collection.find().toArray();
+        return sendOk(res, { data: posts });
     }
   
     return sendMethodNotAllowed(res);
