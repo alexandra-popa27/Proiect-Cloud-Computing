@@ -83,12 +83,12 @@ const NewPostPage = () => {
                 {imagePreviews.map((src, idx) => (
                     <div
                     key={idx}
-                    className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+                    className="w-full max-w-xl bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
                     >
                     <img
                         src={src}
                         alt={`Preview ${idx}`}
-                        className="rounded-t-lg w-[320px] h-[200px] object-cover"
+                        className="rounded-lg w-full h-auto object-contain"
                     />
                     </div>
                 ))}
