@@ -42,7 +42,7 @@ const ProfilePage = () => {
     : "/profile_icon.jpg";
 
   return (
-    <div className="min-h-screen bg-beige flex flex-col overflow-y-auto">
+    <div className="min-h-screen bg-beige flex flex-col overflow-y-auto pb-24">
       <div className="relative h-96 overflow-hidden p-4">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Cooking Hub Background" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
@@ -84,17 +84,18 @@ const ProfilePage = () => {
 
       {/* User Posts Section */}
       <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center">
-        {posts.map((post) => (
-          <div
-            key={post._id}
-            className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
-          >
-            <img src={post.images[0]} alt="Post" className="rounded-t-lg w-full h-48 object-cover" />
-            <div className="p-5">
-              <p className="text-gray-700 dark:text-gray-300 text-sm">{post.description}</p>
-            </div>
+      {posts.map((post) => (
+        <div
+          key={post._id}
+          onClick={() => router.push(`/view-post?id=${post._id}`)}
+          className="cursor-pointer max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:shadow-lg transition-shadow"
+        >
+          <img src={post.images[0]} alt="Post" className="rounded-t-lg w-full h-48 object-cover" />
+          <div className="p-5">
+            <p className="text-gray-700 dark:text-gray-300 text-sm">{post.description}</p>
           </div>
-        ))}
+        </div>
+      ))}
       </div>
 
       <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 border-t border-gray-700 z-50">

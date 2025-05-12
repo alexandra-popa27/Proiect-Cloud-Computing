@@ -30,6 +30,16 @@ export default async function handler(req, res) {
         const posts = await collection.find().toArray();
         return sendOk(res, { data: posts });
     }
+
+    if (req.method === "DELETE") {
+        const { id } = req.query;
+        if (!id) return sendBadRequest(res, "Missing post ID.");
+      
+        const collection = await getCollection(COLLECTION_NAME);
+        const result = await collection.deleteOne({ _id: new ObjectId(id) });
+      
+        return sendOk(res, { deletedCount: result.deletedCount });
+    }
   
     return sendMethodNotAllowed(res);
   }
