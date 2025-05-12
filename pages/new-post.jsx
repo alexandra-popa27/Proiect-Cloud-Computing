@@ -43,9 +43,6 @@ const NewPostPage = () => {
       comments: [],
     };
 
-    console.log("Post being sent:", post);
-    console.log("user._id:", user._id);
-
     const response = await fetch("/api/posts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
