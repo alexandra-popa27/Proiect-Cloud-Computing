@@ -39,32 +39,37 @@ const RequestsPage = () => {
     }
   };
 
-  if (!currentUser || currentUser.role !== "admin") return null;
-
   return (
     <div className="min-h-screen bg-beige p-4">
       <div className="relative h-60 overflow-hidden mb-8">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Requests" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold text-center">
-          Chef Requests
+          Requests
         </div>
       </div>
 
       <div className="p-4 flex flex-wrap justify-center gap-6">
-        {users.map((user) => (
-          <div key={user.email} className="max-w-sm w-full bg-white border border-gray-200 rounded-lg shadow p-4 flex flex-col items-center">
-            <img src={user.profilePicture || "/profile_icon.jpg"} className="w-24 h-24 rounded-full object-cover mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
-            <p className="text-sm text-gray-700">{user.email}</p>
-            <p className="text-sm text-gray-700 mb-3">{user.phone}</p>
-            <button
-              onClick={() => handlePromote(user._id)}
-              className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2"
+        {currentUser?.role === "admin" &&
+          users.map((user) => (
+            <div
+              key={user.email}
+              className="max-w-sm w-full bg-white border border-gray-200 rounded-lg shadow p-4 flex flex-col items-center"
             >
-              Promote to chef
-            </button>
-          </div>
-        ))}
+              <img
+                src={user.profilePicture || "/profile_icon.jpg"}
+                className="w-24 h-24 rounded-full object-cover mb-4"
+              />
+              <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
+              <p className="text-sm text-gray-700">{user.email}</p>
+              <p className="text-sm text-gray-700 mb-3">{user.phone}</p>
+              <button
+                onClick={() => handlePromote(user._id)}
+                className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2"
+              >
+                Promote to chef
+              </button>
+            </div>
+          ))}
       </div>
 
       {/* Bottom Navigation */}

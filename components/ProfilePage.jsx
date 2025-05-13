@@ -82,19 +82,24 @@ const ProfilePage = () => {
       </div>
 
       {/* User Posts Section */}
-      <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center">
-      {posts.map((post) => (
-        <div
-          key={post._id}
-          onClick={() => { console.log("Clicked post ID:", post._id); router.push(`/view-post?id=${post._id}`)}}
-          className="cursor-pointer max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:shadow-lg transition-shadow"
-        >
-          <img src={post.images[0]} alt="Post" className="rounded-t-lg w-full h-48 object-cover" />
-          <div className="p-5">
-            <p className="text-gray-700 dark:text-gray-300 text-sm">{post.description}</p>
+      <div className="p-4 flex flex-wrap justify-center gap-6">
+        {posts.map((post) => (
+          <div
+            key={post._id}
+            onClick={() => router.push(`/view-post?id=${post._id}`)}
+            className="cursor-pointer w-full sm:w-72 md:w-80 lg:w-72 bg-white border border-gray-200 rounded-lg shadow hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700"
+          >
+            <img src={post.images[0]} alt="Post" className="rounded-t-lg w-full h-48 object-cover" />
+            <div className="p-5">
+              <h5 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white truncate">
+                {post.description}
+              </h5>
+              <p className="text-sm text-gray-500">
+                {new Date(post.createdAt).toLocaleDateString()}
+              </p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
       </div>
 
       <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 border-t border-gray-700 z-50">
