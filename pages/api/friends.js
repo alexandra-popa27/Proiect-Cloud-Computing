@@ -28,14 +28,29 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "GET") {
-    const { receiverId } = req.query;
-    if (!receiverId) return sendBadRequest(res, "Missing receiverId");
-
-    const requests = await collection
-      .find({ receiverId: new ObjectId(receiverId), status: "sent" })
-      .toArray();
-
-    return sendOk(res, requests);
+    const { requesterId, receiverId } = req.query;
+  
+    // Caz 1: verificare specifică între doi utilizatori
+    if (requesterId && receiverId) {
+      const existing = await collection.findOne({
+        requesterId: new ObjectId(requesterId),
+        receiverId: new ObjectId(receiverId),
+      });
+  
+      if (!existing) return sendOk(res, null);
+      return sendOk(res, existing);
+    }
+  
+    // Caz 2: cereri primite (folosit în requests.jsx)
+    if (receiverId) {
+      const requests = await collection
+        .find({ receiverId: new ObjectId(receiverId), status: "sent" })
+        .toArray();
+  
+      return sendOk(res, requests);
+    }
+  
+    return sendBadRequest(res, "Missing parameters.");
   }
 
   if (req.method === "PUT") {

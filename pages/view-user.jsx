@@ -7,13 +7,27 @@ const ViewUserPage = () => {
   const { id } = router.query;
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [isRequestSent, setIsRequestSent] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [buttonState, setButtonState] = useState({ label: "Request Friend", disabled: false });
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      setCurrentUser(JSON.parse(stored));
+    }
+  }, []);
 
   useEffect(() => {
     if (!id) return;
     fetchUserById(id);
     fetchPostsByUser(id);
   }, [id]);
+
+  useEffect(() => {
+    if (user && currentUser) {
+      checkFriendshipStatus();
+    }
+  }, [user, currentUser]);
 
   const fetchUserById = async (userId) => {
     try {
@@ -31,10 +45,8 @@ const ViewUserPage = () => {
       const res = await fetch("/api/posts");
       const allPosts = await res.json();
       const userPosts = allPosts.data.data.filter((post) => {
-        if (typeof post.authorId === "object") {
-          return post.authorId.$oid === userId || post.authorId === userId;
-        }
-        return post.authorId === userId;
+        const postAuthor = typeof post.authorId === "object" ? post.authorId.$oid : post.authorId;
+        return postAuthor === userId;
       });
       setPosts(userPosts);
     } catch (err) {
@@ -42,7 +54,41 @@ const ViewUserPage = () => {
     }
   };
 
-  if (!user) return null;
+  const checkFriendshipStatus = async () => {
+    // 1. Sunt deja prieteni
+    if (currentUser.friends?.includes(user._id)) {
+      setButtonState({ label: "Friend", disabled: true });
+      return;
+    }
+
+    // 2. A trimis deja cerere
+    const sentRes = await fetch(`/api/friends?requesterId=${currentUser._id}&receiverId=${user._id}`);
+    const sentData = await sentRes.json();
+    if (sentData?.status === "sent") {
+      setButtonState({ label: "Request Sent", disabled: true });
+      return;
+    }
+
+    // 3. A primit cerere
+    const receivedRes = await fetch(`/api/friends?requesterId=${user._id}&receiverId=${currentUser._id}`);
+    const receivedData = await receivedRes.json();
+    if (receivedData?.status === "sent") {
+      setButtonState({ label: "This user asked to be your friend", disabled: true });
+      return;
+    }
+
+    // 4. Nicio relație - se poate trimite cerere
+    setButtonState({ label: "Request Friend", disabled: false });
+  };
+
+  const handleSendRequest = async () => {
+    const result = await sendFriendRequest(currentUser._id, user._id);
+    if (result.success || result.message === "Already sent") {
+      setButtonState({ label: "Request Sent", disabled: true });
+    }
+  };
+
+  if (!user || !currentUser) return null;
 
   const profileImage = user.profilePicture?.trim() !== ""
     ? user.profilePicture
@@ -50,6 +96,7 @@ const ViewUserPage = () => {
 
   return (
     <div className="min-h-screen bg-beige flex flex-col overflow-y-auto pb-24">
+      {/* Background */}
       <div className="relative h-96 overflow-hidden p-4">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Background" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
@@ -57,6 +104,7 @@ const ViewUserPage = () => {
         </div>
       </div>
 
+      {/* Profile Info */}
       <div className="flex flex-col items-center justify-center mt-10 px-4">
         <div className="flex flex-col md:flex-row items-center gap-8">
           <img
@@ -67,28 +115,25 @@ const ViewUserPage = () => {
           <div className="text-center md:text-left">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-black mb-2">{user.name}</h2>
             <p className="text-sm text-gray-700 dark:text-black">Posts: {posts.length}</p>
-            <p className="text-sm text-gray-700 dark:text-black">Friends: 0</p>
+            <p className="text-sm text-gray-700 dark:text-black">Friends: {user.friends?.length || 0}</p>
           </div>
         </div>
 
         <div className="mt-6 flex justify-center">
-        <button
+          <button
             type="button"
-            disabled={isRequestSent}
-            onClick={async () => {
-            const current = JSON.parse(localStorage.getItem("user"));
-            const result = await sendFriendRequest(current._id, id);
-            if (result.success || result.message === "Already sent") {
-                setIsRequestSent(true);
-            }
-            }}
-            className={`text-white ${isRequestSent ? "bg-gray-500 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"} focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5`}
-        >
-            {isRequestSent ? "Request Sent" : "Request Friend"}
-        </button>
+            disabled={buttonState.disabled}
+            onClick={handleSendRequest}
+            className={`text-white ${
+              buttonState.disabled ? "bg-gray-500 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"
+            } focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5`}
+          >
+            {buttonState.label}
+          </button>
         </div>
       </div>
 
+      {/* Posts */}
       <div className="p-4 flex flex-wrap justify-center gap-6">
         {posts.map((post) => (
           <div
