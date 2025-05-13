@@ -89,7 +89,7 @@ const RequestsPage = () => {
               <div
                 key={user._id}
                 className="flex items-center gap-4 bg-white p-3 rounded-lg shadow border cursor-pointer hover:bg-gray-100 transition"
-                onClick={() => router.push(`/view-post?id=${user._id}`)}
+                onClick={() => router.push(`/view-user?id=${user._id}`)}
               >
                 <img
                   src={user.profilePicture || "/profile_icon.jpg"}
