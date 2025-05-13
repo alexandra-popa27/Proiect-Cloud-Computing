@@ -69,6 +69,15 @@ export default async function handler(req, res) {
     return sendOk(res, updatedUser);
   }
 
+  else if (req.method === "GET") {
+    try {
+      const allUsers = await collection.find().toArray();
+      return sendOk(res, allUsers);
+    } catch (error) {
+      return sendBadRequest(res, "Failed to fetch users.");
+    }
+  }
+
   return sendMethodNotAllowed(res);
 }
 

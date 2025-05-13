@@ -64,7 +64,7 @@ const MainPage = () => {
 
   return (
     <div className="relative bg-beige p-4">
-      <div className="relative h-96 overflow-hidden p-4">
+      <div className="relative h-96 overflow-hidden">
         <img
           className="absolute inset-0 w-full h-full object-cover"
           src="/cooking.jpg"
@@ -83,7 +83,7 @@ const MainPage = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-500"
             />
-        </div>
+      </div>
 
       {user?.role === "chef" && (
         <div className="p-4 flex flex-wrap justify-center">

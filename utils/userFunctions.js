@@ -25,3 +25,15 @@ export const getChefRequests = async () => {
       return { error: "Promotion failed" };
     }
   };
+
+  export const getAllUsers = async () => {
+    try {
+      const response = await fetch("/api/users");
+      const data = await response.json();
+      if (!data || !data.length) return [];
+      return data;
+    } catch (error) {
+      console.error("Error fetching all users:", error);
+      return [];
+    }
+  };

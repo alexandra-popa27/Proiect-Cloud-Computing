@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { getChefRequests, promoteUser } from "@/utils/userFunctions";
+import { getChefRequests, promoteUser, getAllUsers } from "@/utils/userFunctions";
 
 const RequestsPage = () => {
   const [users, setUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const router = useRouter();
 
@@ -14,33 +16,52 @@ const RequestsPage = () => {
       setCurrentUser(parsed);
 
       if (parsed.role === "admin") {
-        loadUsers();
+        loadChefRequests();
+      } else if (parsed.role === "generic" || parsed.role === "chef") {
+        loadAllUsers();
       }
     } else {
       router.push("/");
     }
   }, []);
 
-  const loadUsers = async () => {
-    const fetchedUsers = await getChefRequests();
-    setUsers(fetchedUsers);
+  const loadChefRequests = async () => {
+    const fetched = await getChefRequests();
+    setUsers(fetched);
+  };
+
+  const loadAllUsers = async () => {
+    const all = await getAllUsers();
+    setUsers(all);
   };
 
   const handlePromote = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to upgrade this user to professional chef?");
-    if (!confirmed) return;
+    const confirm = window.confirm("Promote this user to chef?");
+    if (!confirm) return;
 
     const result = await promoteUser(id);
     if (result.success) {
       alert("User promoted!");
-      await loadUsers(); // re-fetch list
+      await loadChefRequests();
     } else {
       alert(result.error || "Failed to promote.");
     }
   };
 
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredUsers([]);
+    } else {
+      const lower = searchQuery.toLowerCase();
+      const results = users.filter((user) =>
+        user.name.toLowerCase().includes(lower)
+      );
+      setFilteredUsers(results);
+    }
+  }, [searchQuery, users]);
+
   return (
-    <div className="min-h-screen bg-beige p-4">
+    <div className="min-h-screen bg-beige p-4 pb-28">
       <div className="relative h-60 overflow-hidden mb-8">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Requests" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold text-center">
@@ -48,9 +69,43 @@ const RequestsPage = () => {
         </div>
       </div>
 
-      <div className="p-4 flex flex-wrap justify-center gap-6">
-        {currentUser?.role === "admin" &&
-          users.map((user) => (
+      {/* Two columns */}
+      <div className="flex flex-col lg:flex-row gap-8 px-4">
+        {/* Left column: Search */}
+        <div className="lg:w-1/2 w-full">
+          <h2 className="text-xl font-semibold mb-4">Search for users</h2>
+          <input
+            type="text"
+            placeholder="Search user by name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm mb-6 focus:outline-none focus:ring focus:border-blue-500"
+          />
+
+          <div className="flex flex-col gap-4">
+            {filteredUsers.map((user) => (
+              <div key={user._id} className="flex items-center gap-4 bg-white p-3 rounded-lg shadow border">
+                <img
+                  src={user.profilePicture || "/profile_icon.jpg"}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <span className="text-sm font-medium text-gray-800">{user.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right column: Friend requests */}
+        <div className="lg:w-1/2 w-full">
+          <h2 className="text-xl font-semibold mb-4">Friend Requests</h2>
+          <p className="text-gray-600">Coming soon...</p>
+        </div>
+      </div>
+
+      {/* Admin-only promote section */}
+      {currentUser?.role === "admin" && (
+        <div className="mt-10 p-4 flex flex-wrap justify-center gap-6">
+          {users.map((user) => (
             <div
               key={user.email}
               className="max-w-sm w-full bg-white border border-gray-200 rounded-lg shadow p-4 flex flex-col items-center"
@@ -70,9 +125,10 @@ const RequestsPage = () => {
               </button>
             </div>
           ))}
-      </div>
+        </div>
+      )}
 
-      {/* Bottom Navigation */}
+      {/* Bottom Nav */}
       <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 border-t border-gray-700 z-50">
         <button onClick={() => router.push("/profile")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
           <img src="/profile_icon.jpg" alt="Profile" className="w-5 h-5 rounded-full" /> Profile
