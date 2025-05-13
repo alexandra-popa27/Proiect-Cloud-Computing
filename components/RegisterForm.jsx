@@ -20,7 +20,7 @@ const RegisterForm = ({ onSubmit, onCancel }) => {
   return (
     <div className="min-h-screen bg-beige flex flex-col">
       {/* Background cu text overlay */}
-      <div className="relative h-60 overflow-hidden p-4">
+      <div className="relative h-60 overflow-hidden">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Register Background" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
           Create your Cooking Hub account
