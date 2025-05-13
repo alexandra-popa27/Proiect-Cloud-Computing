@@ -32,6 +32,7 @@ const RequestsPage = () => {
 
   const loadAllUsers = async () => {
     const all = await getAllUsers();
+    console.log("Fetched all users:", all);
     setUsers(all);
   };
 
@@ -49,6 +50,8 @@ const RequestsPage = () => {
   };
 
   useEffect(() => {
+    console.log("Search query:", searchQuery);
+    console.log("Users state:", users);
     if (searchQuery.trim() === "") {
       setFilteredUsers([]);
     } else {
@@ -57,6 +60,7 @@ const RequestsPage = () => {
         user.name.toLowerCase().includes(lower)
       );
       setFilteredUsers(results);
+      console.log("Filtered results:", results);
     }
   }, [searchQuery, users]);
 
