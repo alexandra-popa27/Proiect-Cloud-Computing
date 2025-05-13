@@ -82,19 +82,27 @@ const ViewPostPage = () => {
           <p className="text-sm text-gray-500">Posted on: {new Date(post.createdAt).toLocaleString()}</p>
 
           <div className="flex gap-4 mt-4">
-            <button
-              onClick={() => router.push("/profile")}
-              className="text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-            >
-              Back to Profile
-            </button>
-
-            {user?._id === post.authorId && (
+            {user?._id === post.authorId ? (
+              <>
+                <button
+                  onClick={() => router.push("/profile")}
+                  className="text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                >
+                  Back to Profile
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                >
+                  Delete Post
+                </button>
+              </>
+            ) : (
               <button
-                onClick={handleDelete}
-                className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                onClick={() => router.push("/requests")}
+                className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
               >
-                Delete Post
+                Back to Requests
               </button>
             )}
           </div>

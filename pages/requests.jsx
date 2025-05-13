@@ -32,7 +32,6 @@ const RequestsPage = () => {
 
   const loadAllUsers = async () => {
     const all = await getAllUsers();
-    console.log("Fetched all users:", all);
     setUsers(all);
   };
 
@@ -50,8 +49,6 @@ const RequestsPage = () => {
   };
 
   useEffect(() => {
-    console.log("Search query:", searchQuery);
-    console.log("Users state:", users);
     if (searchQuery.trim() === "") {
       setFilteredUsers([]);
     } else {
@@ -60,7 +57,6 @@ const RequestsPage = () => {
         user.name.toLowerCase().includes(lower)
       );
       setFilteredUsers(results);
-      console.log("Filtered results:", results);
     }
   }, [searchQuery, users]);
 
@@ -87,15 +83,21 @@ const RequestsPage = () => {
           />
 
           <div className="flex flex-col gap-4">
-            {filteredUsers.map((user) => (
-              <div key={user._id} className="flex items-center gap-4 bg-white p-3 rounded-lg shadow border">
+          {filteredUsers
+            .filter((user) => user._id !== currentUser?._id)
+            .map((user) => (
+              <div
+                key={user._id}
+                className="flex items-center gap-4 bg-white p-3 rounded-lg shadow border cursor-pointer hover:bg-gray-100 transition"
+                onClick={() => router.push(`/view-post?id=${user._id}`)}
+              >
                 <img
                   src={user.profilePicture || "/profile_icon.jpg"}
                   className="w-10 h-10 rounded-full object-cover"
                 />
                 <span className="text-sm font-medium text-gray-800">{user.name}</span>
               </div>
-            ))}
+          ))}
           </div>
         </div>
 
