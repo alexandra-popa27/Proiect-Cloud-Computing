@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getChefRequests, promoteUser, getAllUsers } from "@/utils/userFunctions";
+import { getFriendRequests, acceptFriendRequest } from "@/utils/userFunctions";
 
 const RequestsPage = () => {
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [friendRequests, setFriendRequests] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -19,6 +21,7 @@ const RequestsPage = () => {
         loadChefRequests();
       } else if (parsed.role === "generic" || parsed.role === "chef") {
         loadAllUsers();
+        loadFriendRequests(parsed._id);
       }
     } else {
       router.push("/");
@@ -33,6 +36,11 @@ const RequestsPage = () => {
   const loadAllUsers = async () => {
     const all = await getAllUsers();
     setUsers(all);
+  };
+
+  const loadFriendRequests = async (receiverId) => {
+    const requests = await getFriendRequests(receiverId);
+    setFriendRequests(requests);
   };
 
   const handlePromote = async (id) => {
@@ -104,7 +112,40 @@ const RequestsPage = () => {
         {/* Right column: Friend requests */}
         <div className="lg:w-1/2 w-full">
           <h2 className="text-xl font-semibold mb-4">Friend Requests</h2>
-          <p className="text-gray-600">Coming soon...</p>
+          {friendRequests.length === 0 ? (
+            <p className="text-gray-600">No friend requests</p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {friendRequests.map((req) => {
+                const requester = users.find((u) => u._id === req.requesterId.toString());
+                if (!requester) return null;
+
+                return (
+                  <div key={req._id} className="flex items-center justify-between bg-white p-3 rounded-lg shadow border">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={requester.profilePicture || "/profile_icon.jpg"}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                      <span className="text-sm font-medium text-gray-800">{requester.name}</span>
+                    </div>
+                    <button
+                      className="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs"
+                      onClick={async () => {
+                        const res = await acceptFriendRequest(req._id);
+                        if (res.success) {
+                          alert("Friend request accepted!");
+                          setFriendRequests((prev) => prev.filter((r) => r._id !== req._id));
+                        }
+                      }}
+                    >
+                      Accept
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 

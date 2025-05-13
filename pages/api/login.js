@@ -36,7 +36,8 @@ export default async function handler(req, res) {
         checkChef: user.checkChef,
         email: user.email,
         phone: user.phone || "",
-        profilePicture: user.profilePicture || ""
+        profilePicture: user.profilePicture || "",
+        friends: user.friends || []
     });
   } catch (error) {
     console.error(error);

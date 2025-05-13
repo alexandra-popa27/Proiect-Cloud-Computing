@@ -42,6 +42,7 @@ export default async function handler(req, res) {
       role: "generic",
       profilePicture: "/profile_icon.jpg",
       createdAt: new Date(),
+      friends: [],
     });
 
     return sendOk(res, { userId: result.insertedId });

@@ -52,3 +52,28 @@ export const getChefRequests = async () => {
       return { error: true };
     }
   };
+
+  export const getFriendRequests = async (receiverId) => {
+    try {
+      const res = await fetch(`/api/friends?receiverId=${receiverId}`);
+      const data = await res.json();
+      return data.data || [];
+    } catch (err) {
+      console.error("Failed to fetch friend requests:", err);
+      return [];
+    }
+  };
+  
+  export const acceptFriendRequest = async (requestId) => {
+    try {
+      const res = await fetch("/api/friends", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId }),
+      });
+      return await res.json();
+    } catch (err) {
+      console.error("Failed to accept friend request:", err);
+      return { error: true };
+    }
+  };
