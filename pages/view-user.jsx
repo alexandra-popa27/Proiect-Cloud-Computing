@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { sendFriendRequest } from "@/utils/userFunctions";
 
 const ViewUserPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [isRequestSent, setIsRequestSent] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -70,13 +72,20 @@ const ViewUserPage = () => {
         </div>
 
         <div className="mt-6 flex justify-center">
-          <button
+        <button
             type="button"
-            onClick={() => alert("Friend request sent (not implemented yet)")}
-            className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5"
-          >
-            Request Friend
-          </button>
+            disabled={isRequestSent}
+            onClick={async () => {
+            const current = JSON.parse(localStorage.getItem("user"));
+            const result = await sendFriendRequest(current._id, id);
+            if (result.success || result.message === "Already sent") {
+                setIsRequestSent(true);
+            }
+            }}
+            className={`text-white ${isRequestSent ? "bg-gray-500 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"} focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5`}
+        >
+            {isRequestSent ? "Request Sent" : "Request Friend"}
+        </button>
         </div>
       </div>
 

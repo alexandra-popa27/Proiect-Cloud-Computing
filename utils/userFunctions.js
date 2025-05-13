@@ -37,3 +37,18 @@ export const getChefRequests = async () => {
       return [];
     }
   };
+
+  export const sendFriendRequest = async (requesterId, receiverId) => {
+    try {
+      const res = await fetch("/api/friends", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requesterId, receiverId }),
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error("Failed to send friend request:", err);
+      return { error: true };
+    }
+  };
