@@ -23,27 +23,43 @@ const ViewPostPage = () => {
   const loadPostData = async (postId) => {
     try {
       setIsLoading(true);
-
+  
       const res = await fetch(`/api/posts?id=${postId}`);
       const data = await res.json();
       const postData = data.data.data || data.data;
       setPost(postData);
-
+  
       const usersRes = await fetch("/api/users");
       const users = await usersRes.json();
-      const found = users.data.find((u) => u._id === postData.authorId);
+  
+      const found = users.data.data.find((u) => u._id === postData.authorId);
       setAuthor(found);
-
-      // Fetch comments
+  
       if (postData.comments?.length) {
         const queryString = postData.comments.map((id) => `ids=${id}`).join("&");
         console.log("Fetching comments with query:", queryString);
         const commentsRes = await fetch("/api/comments?" + queryString);
         const commentsData = await commentsRes.json();
         console.log("Received comments:", commentsData);
-        setComments(commentsData.data.data || []);
+  
+        const rawComments = commentsData.data.data || [];
+  
+        const enrichedComments = rawComments.map((c) => {
+          const user = users.data.find((u) => u._id === c.commentatorId);
+          return {
+            ...c,
+            commentator: user || {
+              name: "Unknown",
+              profilePicture: "/profile_icon.jpg",
+            },
+          };
+        });
+  
+        setComments(enrichedComments);
+      } else {
+        setComments([]);
       }
-
+  
       setIsLoading(false);
     } catch (err) {
       console.error("Error loading post or comments:", err);
