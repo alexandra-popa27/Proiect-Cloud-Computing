@@ -37,7 +37,10 @@ const ViewPostPage = () => {
       // Fetch comments
       if (postData.comments?.length) {
         const queryString = postData.comments.map((id) => `ids=${id}`).join("&");
+        console.log("Fetching comments with query:", queryString);
         const commentsRes = await fetch("/api/comments?" + queryString);
+        const commentsData = await commentsRes.json();
+        console.log("Received comments:", commentsData);
         setComments(commentsData.data || []);
       }
 
