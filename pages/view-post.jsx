@@ -59,29 +59,23 @@ const ViewPostPage = () => {
 
   const handlePostComment = async () => {
     if (!commentText.trim()) return;
-
+  
     const res = await fetch("/api/comments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        postId: id,
         commentatorId: user._id,
         text: commentText,
-        commentDate: new Date().toISOString(),
       }),
     });
-
+  
     const comment = await res.json();
     if (comment.success) {
-      // Update post with comment ID
-      await fetch(`/api/posts?id=${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ commentId: comment.data.insertedId }),
-      });
-
-      // Reload comments
       setCommentText("");
       loadPostData(id);
+    } else {
+      console.error("Failed to post comment:", comment);
     }
   };
 
