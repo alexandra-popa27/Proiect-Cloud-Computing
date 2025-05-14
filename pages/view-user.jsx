@@ -62,6 +62,7 @@ const ViewUserPage = () => {
 
     const sentRes = await fetch(`/api/friends?requesterId=${currentUser._id}&receiverId=${user._id}`);
     const sentData = await sentRes.json();
+    console.log("Sent friend request data:", sentData);
     if (sentData?.status === "sent") {
       setButtonState({ label: "Request Sent", disabled: true });
       return;
@@ -69,6 +70,7 @@ const ViewUserPage = () => {
 
     const receivedRes = await fetch(`/api/friends?requesterId=${user._id}&receiverId=${currentUser._id}`);
     const receivedData = await receivedRes.json();
+    console.log("Received friend request data:", receivedData);
     if (receivedData?.status === "sent") {
       setButtonState({ label: "This user asked to be your friend", disabled: true });
       return;
