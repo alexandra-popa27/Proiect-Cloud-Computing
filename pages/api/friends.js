@@ -30,7 +30,6 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     const { requesterId, receiverId } = req.query;
   
-    // Caz 1: verificare specifică între doi utilizatori
     if (requesterId && receiverId) {
       const existing = await collection.findOne({
         requesterId: new ObjectId(requesterId),
@@ -41,7 +40,6 @@ export default async function handler(req, res) {
       return sendOk(res, existing);
     }
   
-    // Caz 2: cereri primite (folosit în requests.jsx)
     if (receiverId) {
       const requests = await collection
         .find({ receiverId: new ObjectId(receiverId), status: "sent" })
