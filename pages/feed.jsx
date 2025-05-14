@@ -79,26 +79,27 @@ const FeedPage = () => {
               <img src={post.images?.[0]} alt="Post" className="w-full max-h-[500px] object-cover" />
 
               {/* Icons */}
-                <div className="flex items-center gap-6 px-4 py-3">
+              <div className="flex items-center gap-6 px-4 py-3">
+                <img src="/empty_heart.png" alt="Like" className="w-8 h-8 cursor-pointer rounded-full" />
                 <img
-                    src="/empty_heart.png"
-                    alt="Like"
-                    className="w-8 h-8 cursor-pointer rounded-full"
+                  src="/comments_icon.jpg"
+                  alt="Comments"
+                  className="w-8 h-8 cursor-pointer rounded-full"
+                  onClick={() => router.push(`/view-post?id=${post._id}&from=feed`)}
                 />
-                <img
-                    src="/comments_icon.png"
-                    alt="Comments"
-                    className="w-8 h-8 cursor-pointer rounded-full"
-                    onClick={() => router.push(`/view-post?id=${post._id}&from=feed`)}
-                    />
-                </div>
+              </div>
 
               {/* Description */}
-              <div className="px-4 pb-6 flex gap-2">
+              <div className="px-4 pb-2 flex gap-2">
                 <span className="text-gray-800 dark:text-white font-semibold">{author?.name}</span>
                 <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">
                   {post.description}
                 </p>
+              </div>
+
+              {/* Date */}
+              <div className="px-4 pb-4 text-sm text-gray-500">
+                {new Date(post.createdAt).toLocaleDateString()}
               </div>
             </div>
           );
@@ -129,4 +130,5 @@ const FeedPage = () => {
 };
 
 export default FeedPage;
+
 

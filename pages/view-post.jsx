@@ -25,7 +25,6 @@ const ViewPostPage = () => {
         const postData = data.data.data || data.data;
         setPost(postData);
 
-        // Fetch all users to find author
         const usersRes = await fetch("/api/users");
         const users = await usersRes.json();
         const found = users.data.find((u) => u._id === postData.authorId);
@@ -43,15 +42,9 @@ const ViewPostPage = () => {
     const confirmDelete = confirm("Are you sure you want to delete this post?");
     if (!confirmDelete) return;
 
-    const res = await fetch(`/api/posts?id=${id}`, {
-      method: "DELETE",
-    });
-
-    if (res.ok) {
-      router.push("/profile");
-    } else {
-      alert("Failed to delete post.");
-    }
+    const res = await fetch(`/api/posts?id=${id}`, { method: "DELETE" });
+    if (res.ok) router.push("/profile");
+    else alert("Failed to delete post.");
   };
 
   if (isLoading || !post) return <Spinner />;
@@ -70,15 +63,16 @@ const ViewPostPage = () => {
         </div>
       </div>
 
-      {/* Author info */}
-      <div className="flex flex-col items-center mt-4">
-        <img src={profileImage} className="w-12 h-12 rounded-full object-cover mb-2" alt="Author" />
-        <span className="text-lg font-semibold text-gray-800">{author?.name}</span>
+      {/* Author info in card-style box */}
+      <div className="flex justify-center mt-4">
+        <div className="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow p-4 dark:bg-gray-800 dark:border-gray-700">
+          <img src={profileImage} className="w-12 h-12 rounded-full object-cover mb-2" alt="Author" />
+          <span className="text-lg font-semibold text-gray-800 dark:text-white">{author?.name}</span>
+        </div>
       </div>
 
       {/* Post content */}
       <div className="flex flex-col lg:flex-row justify-center items-start gap-8 px-6 py-8">
-        {/* Left: Image */}
         <div className="flex flex-col items-center w-full lg:w-1/2 gap-4">
           <h3 className="text-lg font-semibold text-black">Picture:</h3>
           {post.images?.length > 0 ? (
@@ -92,7 +86,6 @@ const ViewPostPage = () => {
           )}
         </div>
 
-        {/* Right: Description and controls */}
         <div className="flex flex-col w-full lg:w-1/2 gap-4">
           <h3 className="text-lg font-semibold text-black">Description:</h3>
           <p className="border border-gray-300 rounded-md p-4 bg-white shadow text-gray-800">
