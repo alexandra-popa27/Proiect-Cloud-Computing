@@ -11,6 +11,7 @@ const ViewPostPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
+  const [likers, setLikers] = useState([]);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -23,25 +24,25 @@ const ViewPostPage = () => {
   const loadPostData = async (postId) => {
     try {
       setIsLoading(true);
-  
+
       const res = await fetch(`/api/posts?id=${postId}`);
       const data = await res.json();
       const postData = data.data.data || data.data;
       setPost(postData);
-  
+
       const usersRes = await fetch("/api/users");
       const users = await usersRes.json();
-  
+
       const found = users.data.find((u) => u._id === postData.authorId);
       setAuthor(found);
-  
+
+      // Comentarii
       if (postData.comments?.length) {
         const queryString = postData.comments.map((id) => `ids=${id}`).join("&");
         const commentsRes = await fetch("/api/comments?" + queryString);
         const commentsData = await commentsRes.json();
-  
         const rawComments = commentsData.data.data || [];
-  
+
         const enrichedComments = rawComments.map((c) => {
           const user = users.data.find((u) => u._id === c.commentatorId);
           return {
@@ -52,12 +53,21 @@ const ViewPostPage = () => {
             },
           };
         });
-  
         setComments(enrichedComments);
       } else {
         setComments([]);
       }
-  
+
+      // Likes
+      if (postData.likes?.length) {
+        const likerUsers = postData.likes.map((id) =>
+          users.data.find((u) => u._id === id)
+        ).filter(Boolean);
+        setLikers(likerUsers);
+      } else {
+        setLikers([]);
+      }
+
       setIsLoading(false);
     } catch (err) {
       console.error("Error loading post or comments:", err);
@@ -76,7 +86,7 @@ const ViewPostPage = () => {
 
   const handlePostComment = async () => {
     if (!commentText.trim()) return;
-  
+
     const res = await fetch("/api/comments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -86,7 +96,7 @@ const ViewPostPage = () => {
         text: commentText,
       }),
     });
-  
+
     const comment = await res.json();
     if (comment.success) {
       setCommentText("");
@@ -110,7 +120,7 @@ const ViewPostPage = () => {
         </div>
       </div>
 
-      {/* Author info in card-style box */}
+      {/* Author info */}
       <div className="flex justify-center mt-4">
         <div className="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow p-4 dark:bg-gray-800 dark:border-gray-700">
           <img src={profileImage} className="w-12 h-12 rounded-full object-cover mb-2" alt="Author" />
@@ -136,7 +146,7 @@ const ViewPostPage = () => {
           </p>
           <p className="text-sm text-gray-500">Posted on: {new Date(post.createdAt).toLocaleString()}</p>
 
-          {/* Comments section */}
+          {/* Comments */}
           <div className="border border-gray-300 bg-white rounded-lg p-4 shadow max-h-[300px] overflow-y-auto">
             <h4 className="font-semibold text-gray-800 mb-2">Comments</h4>
             {comments.length === 0 ? (
@@ -162,7 +172,7 @@ const ViewPostPage = () => {
               })
             )}
 
-            {/* Add new comment */}
+            {/* New comment */}
             <div className="mt-4 flex items-center gap-2">
               <input
                 value={commentText}
@@ -178,6 +188,29 @@ const ViewPostPage = () => {
               </button>
             </div>
           </div>
+
+          {/* Likes list - only for post owner */}
+          {user?._id === post.authorId && (
+            <div className="mt-6 border border-gray-300 bg-white rounded-lg p-4 shadow">
+              <h4 className="font-semibold text-gray-800 mb-2">{likers.length} Likes</h4>
+              {likers.length === 0 ? (
+                <p className="text-gray-500 italic text-sm">No likes yet.</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {likers.map((liker, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <img
+                        src={liker.profilePicture?.trim() ? liker.profilePicture : "/profile_icon.jpg"}
+                        className="w-6 h-6 rounded-full"
+                        alt="Liker"
+                      />
+                      <span className="text-sm text-gray-800">{liker.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Control buttons */}
           <div className="flex gap-4 mt-4">
