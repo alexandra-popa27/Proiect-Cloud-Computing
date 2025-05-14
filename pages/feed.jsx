@@ -50,7 +50,7 @@ const FeedPage = () => {
 
   const toggleLike = async (postId, liked) => {
     const method = liked ? "DELETE" : "PUT";
-    const res = await fetch(`/api/posts/like?id=${postId}`, {
+    const res = await fetch(`/api/like?id=${postId}`, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: currentUser._id }),
