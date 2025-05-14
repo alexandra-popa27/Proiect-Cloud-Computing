@@ -9,34 +9,44 @@ const ViewPostPage = () => {
   const [user, setUser] = useState(null);
   const [author, setAuthor] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
-    if (stored) {
-      setUser(JSON.parse(stored));
-    }
+    if (stored) setUser(JSON.parse(stored));
 
     if (!id) return;
-
-    setIsLoading(true);
-    fetch(`/api/posts?id=${id}`)
-      .then((res) => res.json())
-      .then(async (data) => {
-        const postData = data.data.data || data.data;
-        setPost(postData);
-
-        const usersRes = await fetch("/api/users");
-        const users = await usersRes.json();
-        const found = users.data.find((u) => u._id === postData.authorId);
-        setAuthor(found);
-
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch post:", err);
-        setIsLoading(false);
-      });
+    loadPostData(id);
   }, [id]);
+
+  const loadPostData = async (postId) => {
+    try {
+      setIsLoading(true);
+
+      const res = await fetch(`/api/posts?id=${postId}`);
+      const data = await res.json();
+      const postData = data.data.data || data.data;
+      setPost(postData);
+
+      const usersRes = await fetch("/api/users");
+      const users = await usersRes.json();
+      const found = users.data.find((u) => u._id === postData.authorId);
+      setAuthor(found);
+
+      // Fetch comments
+      if (postData.comments?.length) {
+        const commentsRes = await fetch("/api/comments?ids=" + JSON.stringify(postData.comments));
+        const commentsData = await commentsRes.json();
+        setComments(commentsData.data || []);
+      }
+
+      setIsLoading(false);
+    } catch (err) {
+      console.error("Error loading post or comments:", err);
+      setIsLoading(false);
+    }
+  };
 
   const handleDelete = async () => {
     const confirmDelete = confirm("Are you sure you want to delete this post?");
@@ -47,11 +57,37 @@ const ViewPostPage = () => {
     else alert("Failed to delete post.");
   };
 
+  const handlePostComment = async () => {
+    if (!commentText.trim()) return;
+
+    const res = await fetch("/api/comments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        commentatorId: user._id,
+        text: commentText,
+        commentDate: new Date().toISOString(),
+      }),
+    });
+
+    const comment = await res.json();
+    if (comment.success) {
+      // Update post with comment ID
+      await fetch(`/api/posts?id=${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ commentId: comment.data.insertedId }),
+      });
+
+      // Reload comments
+      setCommentText("");
+      loadPostData(id);
+    }
+  };
+
   if (isLoading || !post) return <Spinner />;
 
-  const profileImage = author?.profilePicture?.trim()
-    ? author.profilePicture
-    : "/profile_icon.jpg";
+  const profileImage = author?.profilePicture?.trim() ? author.profilePicture : "/profile_icon.jpg";
 
   return (
     <div className="min-h-screen bg-beige flex flex-col overflow-y-auto pb-24">
@@ -76,11 +112,7 @@ const ViewPostPage = () => {
         <div className="flex flex-col items-center w-full lg:w-1/2 gap-4">
           <h3 className="text-lg font-semibold text-black">Picture:</h3>
           {post.images?.length > 0 ? (
-            <img
-              src={post.images[0]}
-              alt="Post"
-              className="rounded-lg w-full max-w-xl object-contain border"
-            />
+            <img src={post.images[0]} alt="Post" className="rounded-lg w-full max-w-xl object-contain border" />
           ) : (
             <p className="text-sm text-gray-500 italic">No image available</p>
           )}
@@ -93,27 +125,62 @@ const ViewPostPage = () => {
           </p>
           <p className="text-sm text-gray-500">Posted on: {new Date(post.createdAt).toLocaleString()}</p>
 
+          {/* Comments section */}
+          <div className="border border-gray-300 bg-white rounded-lg p-4 shadow max-h-[300px] overflow-y-auto">
+            <h4 className="font-semibold text-gray-800 mb-2">Comments</h4>
+            {comments.length === 0 ? (
+              <p className="text-gray-500 italic text-sm">No comments yet.</p>
+            ) : (
+              comments.map((c, idx) => {
+                const commentator = c.commentator || {};
+                const commentatorImage = commentator.profilePicture?.trim()
+                  ? commentator.profilePicture
+                  : "/profile_icon.jpg";
+                return (
+                  <div key={idx} className="border-b border-gray-200 py-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <img src={commentatorImage} className="w-6 h-6 rounded-full" alt="User" />
+                        <span className="font-medium text-gray-800 text-sm">{commentator.name}</span>
+                      </div>
+                      <span className="text-xs text-gray-500">{new Date(c.commentDate).toLocaleString()}</span>
+                    </div>
+                    <p className="text-gray-700 text-sm mt-1">{c.text}</p>
+                  </div>
+                );
+              })
+            )}
+
+            {/* Add new comment */}
+            <div className="mt-4 flex items-center gap-2">
+              <input
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Write a comment..."
+                className="flex-1 border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none"
+              />
+              <button
+                onClick={handlePostComment}
+                className="text-sm px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700"
+              >
+                Post
+              </button>
+            </div>
+          </div>
+
+          {/* Control buttons */}
           <div className="flex gap-4 mt-4">
             {user?._id === post.authorId ? (
               <>
-                <button
-                  onClick={() => router.push("/profile")}
-                  className="text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                >
+                <button onClick={() => router.push("/profile")} className="text-white bg-gray-600 hover:bg-gray-700 rounded-lg text-sm px-5 py-2.5">
                   Back to Profile
                 </button>
-                <button
-                  onClick={handleDelete}
-                  className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                >
+                <button onClick={handleDelete} className="text-white bg-red-600 hover:bg-red-700 rounded-lg text-sm px-5 py-2.5">
                   Delete Post
                 </button>
               </>
             ) : (
-              <button
-                onClick={() => router.push(from === "feed" ? "/feed" : "/requests")}
-                className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
-              >
+              <button onClick={() => router.push(from === "feed" ? "/feed" : "/requests")} className="text-white bg-blue-600 hover:bg-blue-700 rounded-lg text-sm px-5 py-2.5">
                 {from === "feed" ? "Back to Feed" : "Back to Requests"}
               </button>
             )}

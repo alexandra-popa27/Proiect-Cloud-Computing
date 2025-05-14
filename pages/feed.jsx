@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Spinner from "@/components/Spinner";
 
 const FeedPage = () => {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState(null);
   const [allPosts, setAllPosts] = useState([]);
   const [usersMap, setUsersMap] = useState({});
+  const [isLoading, setIsLoading] = useState(true); // Nou
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -39,12 +41,14 @@ const FeedPage = () => {
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       setAllPosts(friendPosts);
+      setIsLoading(false); // Final încărcare
     } catch (error) {
       console.error("Error loading feed data:", error);
+      setIsLoading(false);
     }
   };
 
-  if (!currentUser) return null;
+  if (!currentUser || isLoading) return <Spinner />;
 
   return (
     <div className="min-h-screen bg-beige flex flex-col overflow-y-auto pb-24">

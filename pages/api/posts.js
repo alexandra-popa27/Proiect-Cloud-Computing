@@ -57,7 +57,24 @@ export default async function handler(req, res) {
         return sendOk(res, { deletedCount: result.deletedCount });
     }
 
+    if (req.method === "PUT") {
+      const { id } = req.query;
+      const { commentId } = req.body;
+    
+      if (!id || !commentId) return sendBadRequest(res, "Missing post ID or comment ID.");
+    
+      try {
+        const result = await collection.updateOne(
+          { _id: new ObjectId(id) },
+          { $addToSet: { comments: new ObjectId(commentId) } } // Folosește $push dacă permiți duplicate
+        );
+    
+        return sendOk(res, { updated: result.modifiedCount === 1 });
+      } catch (error) {
+        console.error("Error updating post with comment ID:", error);
+        return sendBadRequest(res, "Failed to update post with comment ID.");
+      }
+    }
 
-  
     return sendMethodNotAllowed(res);
   }
