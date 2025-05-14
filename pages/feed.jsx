@@ -99,7 +99,7 @@ const FeedPage = () => {
               {/* Icons */}
               <div className="flex items-center gap-2 px-4 py-3">
                 <img
-                    src={liked ? "/full_heart.png" : "/empty_heart.png"}
+                    src={liked ? "/full_heart.jpg" : "/empty_heart.png"}
                     alt="Like"
                     className="w-8 h-8 cursor-pointer rounded-full"
                     onClick={() => toggleLike(post._id, liked)}
