@@ -32,7 +32,7 @@ const ViewPostPage = () => {
       const usersRes = await fetch("/api/users");
       const users = await usersRes.json();
   
-      const found = users.data.data.find((u) => u._id === postData.authorId);
+      const found = users.data.find((u) => u._id === postData.authorId);
       setAuthor(found);
   
       if (postData.comments?.length) {
