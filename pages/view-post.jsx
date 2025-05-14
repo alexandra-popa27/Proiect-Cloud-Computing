@@ -41,7 +41,7 @@ const ViewPostPage = () => {
         const commentsRes = await fetch("/api/comments?" + queryString);
         const commentsData = await commentsRes.json();
         console.log("Received comments:", commentsData);
-        setComments(commentsData.data || []);
+        setComments(commentsData.data.data || []);
       }
 
       setIsLoading(false);
