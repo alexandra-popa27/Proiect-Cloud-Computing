@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       try {
         const result = await collection.updateOne(
           { _id: new ObjectId(id) },
-          { $addToSet: { comments: new ObjectId(commentId) } } // Folosește $push dacă permiți duplicate
+          { $addToSet: { comments: new ObjectId(commentId) } } 
         );
     
         return sendOk(res, { updated: result.modifiedCount === 1 });

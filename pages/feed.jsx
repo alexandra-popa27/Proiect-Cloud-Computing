@@ -7,7 +7,7 @@ const FeedPage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [allPosts, setAllPosts] = useState([]);
   const [usersMap, setUsersMap] = useState({});
-  const [isLoading, setIsLoading] = useState(true); // Nou
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -41,10 +41,25 @@ const FeedPage = () => {
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       setAllPosts(friendPosts);
-      setIsLoading(false); // Final încărcare
+      setIsLoading(false);
     } catch (error) {
       console.error("Error loading feed data:", error);
       setIsLoading(false);
+    }
+  };
+
+  const toggleLike = async (postId, liked) => {
+    const method = liked ? "DELETE" : "PUT";
+    const res = await fetch(`/api/posts/like?id=${postId}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: currentUser._id }),
+    });
+
+    if (res.ok) {
+      fetchData(currentUser);
+    } else {
+      console.error("Failed to update like.");
     }
   };
 
@@ -64,9 +79,8 @@ const FeedPage = () => {
       <div className="p-4 flex flex-col items-center gap-8">
         {allPosts.map((post) => {
           const author = usersMap[post.authorId];
-          const profileImage = author?.profilePicture?.trim() !== ""
-            ? author.profilePicture
-            : "/profile_icon.jpg";
+          const profileImage = author?.profilePicture?.trim() !== "" ? author.profilePicture : "/profile_icon.jpg";
+          const liked = post.likes?.includes(currentUser._id);
 
           return (
             <div
@@ -83,15 +97,23 @@ const FeedPage = () => {
               <img src={post.images?.[0]} alt="Post" className="w-full max-h-[500px] object-cover" />
 
               {/* Icons */}
-              <div className="flex items-center gap-6 px-4 py-3">
-                <img src="/empty_heart.png" alt="Like" className="w-8 h-8 cursor-pointer rounded-full" />
+              <div className="flex items-center gap-2 px-4 py-3">
                 <img
-                  src="/comments_icon.jpg"
-                  alt="Comments"
-                  className="w-8 h-8 cursor-pointer rounded-full"
-                  onClick={() => router.push(`/view-post?id=${post._id}&from=feed`)}
+                    src={liked ? "/full_heart.png" : "/empty_heart.png"}
+                    alt="Like"
+                    className="w-8 h-8 cursor-pointer rounded-full"
+                    onClick={() => toggleLike(post._id, liked)}
                 />
-              </div>
+                <span className="text-gray-700 dark:text-gray-300 text-sm">
+                    {post.likes?.length || 0}
+                </span>
+                <img
+                    src="/comments_icon.jpg"
+                    alt="Comments"
+                    className="w-8 h-8 cursor-pointer rounded-full ml-4"
+                    onClick={() => router.push(`/view-post?id=${post._id}&from=feed`)}
+                />
+                </div>
 
               {/* Description */}
               <div className="px-4 pb-2 flex gap-2">
@@ -113,20 +135,16 @@ const FeedPage = () => {
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 border-t border-gray-700 z-50">
         <button onClick={() => router.push("/main")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
-          <img src="/recipie_icon.jpg" alt="Recipies" className="w-5 h-5 rounded-full" />
-          Recipies
+          <img src="/recipie_icon.jpg" alt="Recipies" className="w-5 h-5 rounded-full" /> Recipies
         </button>
         <button onClick={() => router.push("/profile")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
-          <img src="/profile_icon.jpg" alt="Profile" className="w-5 h-5 rounded-full" />
-          Profile
+          <img src="/profile_icon.jpg" alt="Profile" className="w-5 h-5 rounded-full" /> Profile
         </button>
         <button onClick={() => router.push("/requests")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
-          <img src="/request_icon.jpg" alt="Requests" className="w-5 h-5 rounded-full" />
-          Requests
+          <img src="/request_icon.jpg" alt="Requests" className="w-5 h-5 rounded-full" /> Requests
         </button>
         <button onClick={() => router.push("/chat")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
-          <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" />
-          CookAId
+          <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" /> CookAId
         </button>
       </div>
     </div>
@@ -134,5 +152,3 @@ const FeedPage = () => {
 };
 
 export default FeedPage;
-
-
