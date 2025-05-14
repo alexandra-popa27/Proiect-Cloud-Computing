@@ -79,15 +79,19 @@ const FeedPage = () => {
               <img src={post.images?.[0]} alt="Post" className="w-full max-h-[500px] object-cover" />
 
               {/* Icons */}
-              <div className="flex items-center gap-6 px-4 py-3">
-                <img src="/empty_heart.png" alt="Like" className="w-8 h-8 cursor-pointer" />
+                <div className="flex items-center gap-6 px-4 py-3">
                 <img
-                  src="/comments_icon.png"
-                  alt="Comments"
-                  className="w-8 h-8 cursor-pointer"
-                  onClick={() => router.push(`/view-post?id=${post._id}`)}
+                    src="/empty_heart.png"
+                    alt="Like"
+                    className="w-8 h-8 cursor-pointer rounded-full"
                 />
-              </div>
+                <img
+                    src="/comments_icon.png"
+                    alt="Comments"
+                    className="w-8 h-8 cursor-pointer rounded-full"
+                    onClick={() => router.push(`/view-post?id=${post._id}&from=feed`)}
+                    />
+                </div>
 
               {/* Description */}
               <div className="px-4 pb-6 flex gap-2">
