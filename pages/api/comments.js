@@ -33,26 +33,18 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     const { ids } = req.query;
-    console.log("GET /api/comments - Raw ids param:", ids);
-
-    if (!ids) return sendBadRequest(res, "Missing ids");
-
-    let parsedIds;
-    try {
-      parsedIds = JSON.parse(ids);
-      console.log("Parsed comment IDs:", parsedIds);
-      if (!Array.isArray(parsedIds)) throw new Error("IDs is not an array.");
-    } catch (e) {
-      console.error("Failed to parse ids:", e.message);
-      return sendBadRequest(res, "Invalid ids format. Must be a JSON array.");
+  
+    console.log("GET /api/comments - ids param:", ids);
+  
+    if (!ids || (Array.isArray(ids) && ids.length === 0)) {
+      return sendBadRequest(res, "Missing ids");
     }
-
-    const objectIds = parsedIds.map((id) => new ObjectId(id));
-    console.log("Converted to ObjectIds:", objectIds);
-
+  
+    const idsArray = Array.isArray(ids) ? ids : [ids];
+  
+    const objectIds = idsArray.map((id) => new ObjectId(id));
     const comments = await collection.find({ _id: { $in: objectIds } }).toArray();
-    console.log("Fetched comments from DB:", comments);
-
+  
     return sendOk(res, { data: comments });
   }
 

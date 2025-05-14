@@ -36,8 +36,8 @@ const ViewPostPage = () => {
 
       // Fetch comments
       if (postData.comments?.length) {
-        const commentsRes = await fetch("/api/comments?ids=" + JSON.stringify(postData.comments));
-        const commentsData = await commentsRes.json();
+        const queryString = postData.comments.map((id) => `ids=${id}`).join("&");
+        const commentsRes = await fetch("/api/comments?" + queryString);
         setComments(commentsData.data || []);
       }
 
