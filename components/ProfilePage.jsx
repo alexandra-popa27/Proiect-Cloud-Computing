@@ -131,25 +131,19 @@ const ProfilePage = () => {
       <div className="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 border-t border-gray-700 z-50">
         <button
           onClick={() => router.push("/main")}
-          className="flex items-center gap-2 text-sm hover:text-yellow-400"
-        >
-          <img src="/recipie_icon.jpg" alt="Recipies" className="w-5 h-5 rounded-full" />
-          Recipies
+          className="flex items-center gap-2 text-sm hover:text-yellow-400">
+          <img src="/recipie_icon.jpg" alt="Recipies" className="w-5 h-5 rounded-full" />Recipies
         </button>
         <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
-          <img src="/feed_icon.png" alt="Feed" className="w-5 h-5 rounded-full" />
-          Feed
+          <img src="/feed_icon.png" alt="Feed" className="w-5 h-5 rounded-full" />Feed
         </button>
         <button
           onClick={() => router.push("/requests")}
-          className="flex items-center gap-2 text-sm hover:text-yellow-400"
-        >
-          <img src="/request_icon.jpg" alt="Requests" className="w-5 h-5 rounded-full" />
-          Requests
+          className="flex items-center gap-2 text-sm hover:text-yellow-400">
+          <img src="/request_icon.jpg" alt="Requests" className="w-5 h-5 rounded-full" />Requests
         </button>
         <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
-          <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" />
-          CookAId
+          <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" />CookAId
         </button>
       </div>
     </div>

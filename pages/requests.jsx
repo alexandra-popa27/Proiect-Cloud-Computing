@@ -136,6 +136,15 @@ const RequestsPage = () => {
                         if (res.success) {
                           alert("Friend request accepted!");
                           setFriendRequests((prev) => prev.filter((r) => r._id !== req._id));
+
+                          // ⬇️ Fetch updated user info and update localStorage
+                          const userRes = await fetch("/api/users");
+                          const allUsers = await userRes.json();
+                          const updatedUser = allUsers.data.find((u) => u._id === currentUser._id);
+                          if (updatedUser) {
+                            localStorage.setItem("user", JSON.stringify(updatedUser));
+                            setCurrentUser(updatedUser); // opțional, dacă vrei să actualizezi și state-ul
+                          }
                         }
                       }}
                     >
