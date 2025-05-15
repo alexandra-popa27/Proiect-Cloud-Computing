@@ -1,31 +1,63 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 const CookAIdPage = () => {
   const router = useRouter();
   const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      const user = JSON.parse(stored);
+      setUserId(user._id);
+      loadHistory(user._id);
+    }
+  }, []);
+
+  const loadHistory = async (userId) => {
+    try {
+      const res = await fetch(`/api/history?userId=${userId}`);
+      const data = await res.json();
+      if (res.ok) {
+        const formatted = data.data.flatMap((entry) => [
+          { role: "user", content: entry.question },
+          { role: "ai", content: entry.answer },
+        ]);
+        setChatHistory(formatted);
+      }
+    } catch (err) {
+      console.error("Failed to load chat history:", err);
+    }
+  };
 
   const askQuestion = async () => {
-    if (!question.trim()) return;
+    if (!question.trim() || !userId) return;
 
+    const userMessage = { role: "user", content: question };
+    setChatHistory((prev) => [...prev, userMessage]);
     setLoading(true);
-    setAnswer("");
+    setQuestion("");
 
     try {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, userId }),
       });
 
       const data = await res.json();
-      if (res.ok) setAnswer(data.response);
-      else setAnswer(data.error || "Something went wrong.");
+      const aiMessage = {
+        role: "ai",
+        content: res.ok ? data.response : data.error || "Something went wrong.",
+      };
+
+      setChatHistory((prev) => [...prev, aiMessage]);
     } catch (err) {
       console.error("Error asking question:", err);
-      setAnswer("Failed to get a response.");
+      setChatHistory((prev) => [...prev, { role: "ai", content: "Failed to get a response." }]);
     }
 
     setLoading(false);
@@ -42,14 +74,28 @@ const CookAIdPage = () => {
       </div>
 
       {/* Chat UI */}
-      <div className="flex flex-col items-center p-6">
-        <p className="text-gray-800 text-lg mb-4">Ask me anything about cooking! 🍳</p>
-        <div className="w-full max-w-xl">
+      <div className="flex flex-col items-center p-6 w-full">
+        <div className="w-full max-w-xl bg-white p-4 rounded-lg shadow space-y-4">
+          {chatHistory.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`p-3 rounded-lg ${msg.role === "user"
+                ? "bg-purple-100 text-right ml-auto"
+                : "bg-gray-100 text-left mr-auto"
+                } max-w-[85%]`}
+            >
+              <p className="text-sm text-gray-800 whitespace-pre-line">{msg.content}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Form */}
+        <div className="w-full max-w-xl mt-6">
           <textarea
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="Type your question here..."
-            className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring focus:border-blue-500"
+            className="w-full h-28 p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring focus:border-blue-500"
           />
           <button
             onClick={askQuestion}
@@ -59,13 +105,6 @@ const CookAIdPage = () => {
             {loading ? "Asking..." : "Ask"}
           </button>
         </div>
-
-        {answer && (
-          <div className="mt-6 p-4 bg-white border border-gray-300 rounded-lg shadow w-full max-w-xl">
-            <h3 className="font-semibold mb-2 text-gray-800">Answer:</h3>
-            <p className="text-gray-700 whitespace-pre-line">{answer}</p>
-          </div>
-        )}
       </div>
 
       {/* Bottom Navigation */}

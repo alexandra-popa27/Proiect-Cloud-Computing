@@ -69,7 +69,7 @@ const RequestsPage = () => {
   }, [searchQuery, users]);
 
   return (
-    <div className="min-h-screen bg-beige p-4 pb-28">
+    <div className="relative bg-beige min-h-screen overflow-y-auto pb-24">
       <div className="relative h-60 overflow-hidden mb-8">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Requests" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold text-center">

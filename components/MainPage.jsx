@@ -63,7 +63,7 @@ const MainPage = () => {
   if (isLoading) return <Spinner />;
 
   return (
-    <div className="relative bg-beige p-4">
+    <div className="relative bg-beige min-h-screen overflow-y-auto pb-24">
       <div className="relative h-96 overflow-hidden">
         <img
           className="absolute inset-0 w-full h-full object-cover"
