@@ -6,12 +6,38 @@ const CookAIdPage = () => {
   const [question, setQuestion] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      const user = JSON.parse(stored);
+      setUserId(user._id);
+      loadHistory(user._id);
+    }
+  }, []);
+
+  const loadHistory = async (userId) => {
+    try {
+      const res = await fetch(`/api/history?userId=${userId}`);
+      const data = await res.json();
+      if (res.ok) {
+        const formatted = data.data.flatMap(entry => [
+          { role: "user", content: entry.question },
+          { role: "ai", content: entry.answer }
+        ]);
+        setChatHistory(formatted);
+      }
+    } catch (err) {
+      console.error("Failed to load chat history:", err);
+    }
+  };
 
   const askQuestion = async () => {
-    if (!question.trim()) return;
+    if (!question.trim() || !userId) return;
 
     const userMessage = { role: "user", content: question };
-    setChatHistory((prev) => [...prev, userMessage]);
+    setChatHistory(prev => [...prev, userMessage]);
     setLoading(true);
     setQuestion("");
 
@@ -19,7 +45,7 @@ const CookAIdPage = () => {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, userId }),
       });
 
       const data = await res.json();
@@ -28,13 +54,10 @@ const CookAIdPage = () => {
         content: res.ok ? data.response : data.error || "Something went wrong.",
       };
 
-      setChatHistory((prev) => [...prev, aiMessage]);
+      setChatHistory(prev => [...prev, aiMessage]);
     } catch (err) {
       console.error("Error asking question:", err);
-      setChatHistory((prev) => [
-        ...prev,
-        { role: "ai", content: "Failed to get a response." },
-      ]);
+      setChatHistory(prev => [...prev, { role: "ai", content: "Failed to get a response." }]);
     }
 
     setLoading(false);
@@ -52,6 +75,7 @@ const CookAIdPage = () => {
 
       {/* Chat UI */}
       <div className="flex flex-col items-center p-6 w-full">
+        <p className="text-gray-800 text-lg mb-4">Ask me anything about cooking! 🍳</p>
         <div className="w-full max-w-xl bg-white p-4 rounded-lg shadow space-y-4">
           {chatHistory.map((msg, idx) => (
             <div
