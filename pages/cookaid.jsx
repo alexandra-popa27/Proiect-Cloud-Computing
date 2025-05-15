@@ -22,17 +22,22 @@ const CookAIdPage = () => {
       const res = await fetch(`/api/history?userId=${userId}`);
       const data = await res.json();
       console.log("Received history:", data);
-      if (res.ok) {
-        const formatted = data.data.flatMap(entry => [
+  
+      const historyArray = data?.data?.data;
+      if (res.ok && Array.isArray(historyArray)) {
+        const formatted = historyArray.flatMap(entry => [
           { role: "user", content: entry.question },
           { role: "ai", content: entry.answer }
         ]);
         setChatHistory(formatted);
+      } else {
+        console.warn("Unexpected history format:", data);
       }
     } catch (err) {
       console.error("Failed to load chat history:", err);
     }
   };
+  
 
   const askQuestion = async () => {
     if (!question.trim() || !userId) return;
