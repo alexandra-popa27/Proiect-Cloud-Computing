@@ -1,3 +1,4 @@
+// adăugare între importuri
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
@@ -14,24 +15,20 @@ const CookAIdPage = () => {
       const user = JSON.parse(stored);
       setUserId(user._id);
       loadHistory(user._id);
-      console.log("reusit");
     }
   }, []);
 
   const loadHistory = async (userId) => {
     try {
       const res = await fetch(`/api/history?userId=${userId}`);
-      const data = await res.json();
-  
-      console.log("history response", data); // AICI vezi ce primești din API
-  
-      if (res.ok) {
-        const formatted = data.data.flatMap((entry) => [
-          { role: "user", content: entry.question },
-          { role: "ai", content: entry.answer },
-        ]);
-        setChatHistory(formatted);
-      }
+      const response = await res.json();
+      const entries = response.data || [];
+
+      const formatted = entries.flatMap((entry) => [
+        { role: "user", content: entry.question },
+        { role: "ai", content: entry.answer },
+      ]);
+      setChatHistory(formatted);
     } catch (err) {
       console.error("Failed to load chat history:", err);
     }
@@ -69,7 +66,6 @@ const CookAIdPage = () => {
 
   return (
     <div className="min-h-screen bg-beige flex flex-col overflow-y-auto pb-24">
-      {/* Header */}
       <div className="relative h-96 overflow-hidden">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Cooking Background" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
@@ -77,7 +73,6 @@ const CookAIdPage = () => {
         </div>
       </div>
 
-      {/* Chat UI */}
       <div className="flex flex-col items-center p-6 w-full">
         <div className="w-full max-w-xl bg-white p-4 rounded-lg shadow space-y-4">
           {chatHistory.map((msg, idx) => (
@@ -93,7 +88,6 @@ const CookAIdPage = () => {
           ))}
         </div>
 
-        {/* Form */}
         <div className="w-full max-w-xl mt-6">
           <textarea
             value={question}

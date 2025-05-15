@@ -7,15 +7,17 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     const { userId } = req.query;
+
     if (!userId) return sendBadRequest(res, "Missing userId");
 
     const data = await collection
-      .find({ userId: new ObjectId(userId) }) // <- important!
+      .find({ userId: new ObjectId(userId) })
       .sort({ createdAt: 1 })
       .toArray();
 
-    return sendOk(res, { data }); // Trebuie să fie JSON!
+    return sendOk(res, { data });
   }
 
   return sendMethodNotAllowed(res);
 }
+

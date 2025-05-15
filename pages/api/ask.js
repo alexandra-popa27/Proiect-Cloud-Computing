@@ -1,4 +1,5 @@
 import { getCollection } from "@/utils/functions";
+import { ObjectId } from "mongodb";
 import { Configuration, OpenAIApi } from "openai";
 
 const config = new Configuration({
@@ -27,12 +28,11 @@ export default async function handler(req, res) {
     const collection = await getCollection("historyAI");
 
     await collection.insertOne({
-        userId: new ObjectId(userId),
-        question,
-        answer,
-        createdAt: new Date(),
+      userId: new ObjectId(userId),
+      question,
+      answer,
+      createdAt: new Date(),
     });
-      
 
     return res.status(200).json({ response: answer });
   } catch (err) {
@@ -40,3 +40,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Failed to get response from OpenAI" });
   }
 }
+
