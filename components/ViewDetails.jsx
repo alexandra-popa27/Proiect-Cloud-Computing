@@ -120,9 +120,8 @@ const ViewDetails = (props) => {
           <img src="/request_icon.jpg" alt="Requests" className="w-5 h-5 rounded-full" />
           Requests
         </button>
-        <button className="flex items-center gap-2 text-sm hover:text-yellow-400">
-          <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" />
-          CookAId
+        <button onClick={() => router.push("/cookaid")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
+          <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" /> CookAId
         </button>
       </div>
     </div>

@@ -143,7 +143,7 @@ const FeedPage = () => {
         <button onClick={() => router.push("/requests")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
           <img src="/request_icon.jpg" alt="Requests" className="w-5 h-5 rounded-full" /> Requests
         </button>
-        <button onClick={() => router.push("/chat")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
+        <button onClick={() => router.push("/cookaid")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
           <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" /> CookAId
         </button>
       </div>
