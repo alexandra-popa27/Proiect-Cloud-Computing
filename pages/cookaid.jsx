@@ -21,6 +21,7 @@ const CookAIdPage = () => {
     try {
       const res = await fetch(`/api/history?userId=${userId}`);
       const data = await res.json();
+      console.log("Received history:", data);
       if (res.ok) {
         const formatted = data.data.flatMap(entry => [
           { role: "user", content: entry.question },
