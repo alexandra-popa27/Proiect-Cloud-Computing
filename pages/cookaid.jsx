@@ -14,6 +14,7 @@ const CookAIdPage = () => {
       const user = JSON.parse(stored);
       setUserId(user._id);
       loadHistory(user._id);
+      console.log("reusit");
     }
   }, []);
 
