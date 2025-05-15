@@ -1,5 +1,4 @@
-// adăugare între importuri
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 const CookAIdPage = () => {
@@ -7,35 +6,9 @@ const CookAIdPage = () => {
   const [question, setQuestion] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState(null);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) {
-      const user = JSON.parse(stored);
-      setUserId(user._id);
-      loadHistory(user._id);
-    }
-  }, []);
-
-  const loadHistory = async (userId) => {
-    try {
-      const res = await fetch(`/api/history?userId=${userId}`);
-      const response = await res.json();
-      const entries = response.data || [];
-
-      const formatted = entries.flatMap((entry) => [
-        { role: "user", content: entry.question },
-        { role: "ai", content: entry.answer },
-      ]);
-      setChatHistory(formatted);
-    } catch (err) {
-      console.error("Failed to load chat history:", err);
-    }
-  };
 
   const askQuestion = async () => {
-    if (!question.trim() || !userId) return;
+    if (!question.trim()) return;
 
     const userMessage = { role: "user", content: question };
     setChatHistory((prev) => [...prev, userMessage]);
@@ -46,7 +19,7 @@ const CookAIdPage = () => {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, userId }),
+        body: JSON.stringify({ question }),
       });
 
       const data = await res.json();
@@ -58,7 +31,10 @@ const CookAIdPage = () => {
       setChatHistory((prev) => [...prev, aiMessage]);
     } catch (err) {
       console.error("Error asking question:", err);
-      setChatHistory((prev) => [...prev, { role: "ai", content: "Failed to get a response." }]);
+      setChatHistory((prev) => [
+        ...prev,
+        { role: "ai", content: "Failed to get a response." },
+      ]);
     }
 
     setLoading(false);
@@ -66,6 +42,7 @@ const CookAIdPage = () => {
 
   return (
     <div className="min-h-screen bg-beige flex flex-col overflow-y-auto pb-24">
+      {/* Header */}
       <div className="relative h-96 overflow-hidden">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Cooking Background" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
@@ -73,6 +50,7 @@ const CookAIdPage = () => {
         </div>
       </div>
 
+      {/* Chat UI */}
       <div className="flex flex-col items-center p-6 w-full">
         <div className="w-full max-w-xl bg-white p-4 rounded-lg shadow space-y-4">
           {chatHistory.map((msg, idx) => (
@@ -88,6 +66,7 @@ const CookAIdPage = () => {
           ))}
         </div>
 
+        {/* Form */}
         <div className="w-full max-w-xl mt-6">
           <textarea
             value={question}
