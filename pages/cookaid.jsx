@@ -22,6 +22,9 @@ const CookAIdPage = () => {
     try {
       const res = await fetch(`/api/history?userId=${userId}`);
       const data = await res.json();
+  
+      console.log("history response", data); // AICI vezi ce primești din API
+  
       if (res.ok) {
         const formatted = data.data.flatMap((entry) => [
           { role: "user", content: entry.question },
