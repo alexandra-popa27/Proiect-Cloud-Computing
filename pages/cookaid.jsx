@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 
 const CookAIdPage = () => {
@@ -7,6 +7,7 @@ const CookAIdPage = () => {
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState(null);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -17,33 +18,36 @@ const CookAIdPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatHistory]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const loadHistory = async (userId) => {
     try {
       const res = await fetch(`/api/history?userId=${userId}`);
       const data = await res.json();
-      console.log("Received history:", data);
-  
       const historyArray = data?.data?.data;
       if (res.ok && Array.isArray(historyArray)) {
-        const formatted = historyArray.flatMap(entry => [
+        const formatted = historyArray.flatMap((entry) => [
           { role: "user", content: entry.question },
-          { role: "ai", content: entry.answer }
+          { role: "ai", content: entry.answer },
         ]);
         setChatHistory(formatted);
-      } else {
-        console.warn("Unexpected history format:", data);
       }
     } catch (err) {
       console.error("Failed to load chat history:", err);
     }
   };
-  
 
   const askQuestion = async () => {
     if (!question.trim() || !userId) return;
 
     const userMessage = { role: "user", content: question };
-    setChatHistory(prev => [...prev, userMessage]);
+    setChatHistory((prev) => [...prev, userMessage]);
     setLoading(true);
     setQuestion("");
 
@@ -60,17 +64,20 @@ const CookAIdPage = () => {
         content: res.ok ? data.response : data.error || "Something went wrong.",
       };
 
-      setChatHistory(prev => [...prev, aiMessage]);
+      setChatHistory((prev) => [...prev, aiMessage]);
     } catch (err) {
       console.error("Error asking question:", err);
-      setChatHistory(prev => [...prev, { role: "ai", content: "Failed to get a response." }]);
+      setChatHistory((prev) => [
+        ...prev,
+        { role: "ai", content: "Failed to get a response." },
+      ]);
     }
 
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-beige flex flex-col overflow-y-auto pb-24">
+    <div className="min-h-screen bg-beige flex flex-col pb-24">
       {/* Header */}
       <div className="relative h-96 overflow-hidden">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Cooking Background" />
@@ -79,25 +86,29 @@ const CookAIdPage = () => {
         </div>
       </div>
 
-      {/* Chat UI */}
-      <div className="flex flex-col items-center p-6 w-full">
-        <p className="text-gray-800 text-lg mb-4">Ask me anything about cooking! 🍳</p>
-        <div className="w-full max-w-xl bg-white p-4 rounded-lg shadow space-y-4">
+      {/* Message */}
+      <div className="text-center text-gray-800 text-lg my-4">Ask me anything about cooking! 🍳</div>
+
+      {/* Chat History Scrollable */}
+      <div className="flex justify-center">
+        <div className="w-full max-w-xl bg-white p-4 rounded-lg shadow space-y-4 max-h-[400px] overflow-y-auto">
           {chatHistory.map((msg, idx) => (
             <div
               key={idx}
-              className={`p-3 rounded-lg ${msg.role === "user"
-                ? "bg-purple-100 text-right ml-auto"
-                : "bg-gray-100 text-left mr-auto"
-                } max-w-[85%]`}
+              className={`p-3 rounded-lg ${
+                msg.role === "user" ? "bg-purple-100 text-right ml-auto" : "bg-gray-100 text-left mr-auto"
+              } max-w-[85%]`}
             >
               <p className="text-sm text-gray-800 whitespace-pre-line">{msg.content}</p>
             </div>
           ))}
+          <div ref={messagesEndRef} />
         </div>
+      </div>
 
-        {/* Form */}
-        <div className="w-full max-w-xl mt-6">
+      {/* Form */}
+      <div className="flex justify-center mt-6">
+        <div className="w-full max-w-xl">
           <textarea
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
