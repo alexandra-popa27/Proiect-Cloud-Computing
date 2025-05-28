@@ -39,10 +39,18 @@ const MapPage = () => {
         const loc = results[0].geometry.location;
         setLocation({ lat: loc.lat(), lng: loc.lng() });
 
+        console.log("Geocoding result:", results[0]);
+
         const components = results[0].address_components;
-        const name = components && components.length > 0
-          ? components[0].long_name
-          : results[0].formatted_address;
+        
+            // Caută numele restaurantului din componenta de tip "establishment"
+        const nameComponent = components.find(comp =>
+            comp.types.includes("establishment")
+        );
+
+        const name = nameComponent
+            ? nameComponent.long_name
+            : results[0].formatted_address;
 
         setRestaurantName(name);
         setShowMap(true);
