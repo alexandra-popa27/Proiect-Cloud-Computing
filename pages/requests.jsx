@@ -195,6 +195,9 @@ const RequestsPage = () => {
         <button onClick={() => router.push("/main")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
           <img src="/recipie_icon.jpg" alt="Recipes" className="w-5 h-5 rounded-full" /> Recipes
         </button>
+        <button onClick={() => router.push("/map")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
+          <img src="/map_icon.jpg" alt="Map" className="w-5 h-5 rounded-full" />Map
+        </button>
         <button onClick={() => router.push("/cookaid")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
           <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" /> CookAId
         </button>

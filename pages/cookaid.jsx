@@ -139,6 +139,9 @@ const CookAIdPage = () => {
         <button onClick={() => router.push("/profile")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
           <img src="/profile_icon.jpg" alt="Profile" className="w-5 h-5 rounded-full" /> Profile
         </button>
+        <button onClick={() => router.push("/map")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
+          <img src="/map_icon.jpg" alt="Map" className="w-5 h-5 rounded-full" />Map
+        </button>
       </div>
     </div>
   );

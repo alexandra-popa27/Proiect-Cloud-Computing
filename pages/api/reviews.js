@@ -16,6 +16,15 @@ export default async function handler(req, res) {
       return sendBadRequest(res, "Missing required fields.");
     }
 
+    const existingReview = await collection.findOne({
+      reviewerId: new ObjectId(reviewerId),
+      restaurantName,
+    });
+
+    if (existingReview) {
+      return sendBadRequest(res, "You already reviewed this restaurant.");
+    }
+
     const review = {
       restaurantName,
       lat,

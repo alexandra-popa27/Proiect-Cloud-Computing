@@ -78,14 +78,30 @@ const MapPage = () => {
   const geocodeAddress = async () => {
     const address = addressRef.current.value;
     if (!address.trim()) return;
-
+  
     setInputName(address);
     const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ address }, (results, status) => {
+    geocoder.geocode({ address }, async (results, status) => {
       if (status === "OK" && results.length > 0) {
         const loc = results[0].geometry.location;
-        setLocation({ lat: loc.lat(), lng: loc.lng() });
-        setFormattedAddress(results[0].formatted_address);
+        const foundLat = loc.lat();
+        const foundLng = loc.lng();
+        const formatted = results[0].formatted_address;
+  
+        // verificăm dacă userul a dat deja review la restaurantul cu acest nume
+        const duplicate = allReviews.some(
+          (r) =>
+            r.restaurantName.trim().toLowerCase() === address.trim().toLowerCase() &&
+            r.reviewerId === user._id
+        );
+  
+        if (duplicate) {
+          alert("You already left a review for this restaurant and you can't leave another one. Try another restaurant to review.");
+          return;
+        }
+  
+        setLocation({ lat: foundLat, lng: foundLng });
+        setFormattedAddress(formatted);
         setRestaurantName(address);
         setShowMap(true);
         setSelectedRestaurant(null);
@@ -153,16 +169,12 @@ const MapPage = () => {
             onClick={() => setSelectedRestaurant(null)}
           >
             {friendsLocations.map((r, idx) => (
-              <Marker
+            <Marker
                 key={idx}
                 position={{ lat: r.lat, lng: r.lng }}
                 onClick={() => setSelectedRestaurant(r.restaurantName)}
-                label={{
-                  text: r.restaurantName,
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                }}
-              />
+                title={r.restaurantName} // se afișează la hover
+            />
             ))}
           </GoogleMap>
         )}
@@ -268,20 +280,16 @@ const MapPage = () => {
 
         {/* User map preview */}
         {isLoaded && showMap && (
-          <div className="lg:w-1/2 h-96 border border-gray-300 rounded-lg overflow-hidden">
+        <div className="lg:w-1/2 h-96 border border-gray-300 rounded-lg overflow-hidden">
             <GoogleMap mapContainerStyle={containerStyle} center={location || centerDefault} zoom={14}>
-              {location && (
+            {location && (
                 <Marker
-                  position={location}
-                  label={{
-                    text: inputName,
-                    fontSize: "14px",
-                    fontWeight: "bold",
-                  }}
+                position={location}
+                title={inputName} // acest tooltip apare la hover
                 />
-              )}
+            )}
             </GoogleMap>
-          </div>
+        </div>
         )}
       </div>
 
