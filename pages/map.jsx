@@ -263,7 +263,7 @@ const MapPage = () => {
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   maxLength={100}
-                  placeholder="Write a short review (max 100 chars)"
+                  placeholder="Write a short review (max 100 characters)."
                   className="w-full border p-2 rounded"
                 />
               </div>
@@ -306,6 +306,9 @@ const MapPage = () => {
         </button>
         <button onClick={() => router.push("/main")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
           <img src="/recipie_icon.jpg" alt="Recipies" className="w-5 h-5 rounded-full" />Recipies
+        </button>
+        <button onClick={() => router.push("/cookaid")} className="flex items-center gap-2 text-sm hover:text-yellow-400">
+          <img src="/AI_chat_icon.jpg" alt="CookAId" className="w-5 h-5 rounded-full" /> CookAId
         </button>
       </div>
     </div>
