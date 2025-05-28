@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 
 const containerStyle = {
   width: "100%",
@@ -8,7 +8,7 @@ const containerStyle = {
 };
 
 const centerDefault = {
-  lat: 44.4268, // Bucharest center (example)
+  lat: 44.4268,
   lng: 26.1025,
 };
 
@@ -19,13 +19,15 @@ const MapPage = () => {
   const [restaurantName, setRestaurantName] = useState("");
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState("");
+  const [map, setMap] = useState(null);
+  const [marker, setMarker] = useState(null);
   const addressRef = useRef();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    libraries: ["places"],
+    version: "beta",
   });
-
-  console.log("Google Maps Key:", process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -35,11 +37,25 @@ const MapPage = () => {
   const geocodeAddress = async () => {
     const address = addressRef.current.value;
     const geocoder = new window.google.maps.Geocoder();
+
     geocoder.geocode({ address }, (results, status) => {
       if (status === "OK") {
         const loc = results[0].geometry.location;
-        setLocation({ lat: loc.lat(), lng: loc.lng() });
+        const newLocation = { lat: loc.lat(), lng: loc.lng() };
+        setLocation(newLocation);
         setRestaurantName(results[0].formatted_address);
+
+        if (map) {
+          if (marker) marker.map = null; // remove previous marker
+
+          const advancedMarker = new window.google.maps.marker.AdvancedMarkerElement({
+            position: newLocation,
+            map: map,
+            title: "Your pinned restaurant",
+          });
+
+          setMarker(advancedMarker);
+        }
       } else {
         alert("Geocoding failed: " + status);
       }
@@ -71,6 +87,10 @@ const MapPage = () => {
         setLocation(null);
         setRestaurantName("");
         addressRef.current.value = "";
+        if (marker) {
+          marker.map = null;
+          setMarker(null);
+        }
       } else {
         alert("Failed to submit review.");
       }
@@ -90,59 +110,77 @@ const MapPage = () => {
         </div>
       </div>
 
-      {/* Form */}
-      <div className="p-4 space-y-4">
-        <input
-          type="text"
-          ref={addressRef}
-          placeholder="Type a restaurant address..."
-          className="w-full border p-2 rounded"
-        />
-        <button onClick={geocodeAddress} className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-          Pin a new Restaurant Visit
-        </button>
+      {/* Section with form + map side by side */}
+      <div className="flex flex-col md:flex-row gap-6 p-4">
+        {/* Left side form */}
+        <div className="bg-white p-6 rounded-xl shadow-md border w-full md:w-1/2">
+          <h2 className="text-lg font-semibold mb-2 text-gray-700">
+            Have you tried a new restaurant? Tell your friends about it.
+          </h2>
 
-        {location && (
-          <>
-            <div>
-              <label className="block mt-4">Rate this place:</label>
-              <select
-                value={rating}
-                onChange={(e) => setRating(Number(e.target.value))}
-                className="border p-2 rounded"
+          <input
+            type="text"
+            ref={addressRef}
+            placeholder="Type a restaurant address..."
+            className="w-full border p-2 rounded mb-3"
+          />
+
+          <button onClick={geocodeAddress} className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+            Pin a new Restaurant Visit
+          </button>
+
+          {restaurantName && (
+            <p className="mt-2 text-green-700 font-medium">You have been at: <span className="italic">{restaurantName}</span></p>
+          )}
+
+          {location && (
+            <>
+              <div>
+                <label className="block mt-4">Rate this place:</label>
+                <select
+                  value={rating}
+                  onChange={(e) => setRating(Number(e.target.value))}
+                  className="border p-2 rounded"
+                >
+                  {[1, 2, 3, 4, 5].map((val) => (
+                    <option key={val} value={val}>
+                      {val} Star{val > 1 && "s"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mt-4">
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  maxLength={100}
+                  placeholder="Write a short review (max 100 chars)"
+                  className="w-full border p-2 rounded"
+                />
+              </div>
+
+              <button
+                onClick={submitReview}
+                className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
               >
-                {[1, 2, 3, 4, 5].map((val) => (
-                  <option key={val} value={val}>
-                    {val} Star{val > 1 && "s"}
-                  </option>
-                ))}
-              </select>
-            </div>
+                Submit Review
+              </button>
+            </>
+          )}
+        </div>
 
-            <div className="mt-4">
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                maxLength={100}
-                placeholder="Write a short review (max 100 chars)"
-                className="w-full border p-2 rounded"
-              />
-            </div>
-
-            <button onClick={submitReview} className="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-              Submit Review
-            </button>
-          </>
-        )}
-      </div>
-
-      {/* Google Map */}
-      <div className="p-4">
-        {isLoaded && (
-          <GoogleMap mapContainerStyle={containerStyle} center={location || centerDefault} zoom={14}>
-            {location && <Marker position={location} />}
-          </GoogleMap>
-        )}
+        {/* Right side map */}
+        <div className="w-full md:w-1/2">
+          {isLoaded && (
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={location || centerDefault}
+              zoom={14}
+              onLoad={(mapInstance) => setMap(mapInstance)}
+            />
+          )}
+        </div>
       </div>
 
       {/* Bottom Navigation */}
