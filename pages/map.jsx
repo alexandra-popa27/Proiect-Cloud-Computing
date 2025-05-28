@@ -14,7 +14,7 @@ const MapPage = () => {
       </div>
 
       <div className="p-4">
-        <p className="text-center text-gray-600 mb-4">Map with friends' locations will appear here.</p>
+        <p className="text-center text-gray-600 mb-4">Map with friends&rsquo; locations will appear here.</p>
         <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
           Pin this Restaurant
         </button>
