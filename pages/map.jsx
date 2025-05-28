@@ -38,20 +38,11 @@ const MapPage = () => {
       if (status === "OK") {
         const loc = results[0].geometry.location;
         setLocation({ lat: loc.lat(), lng: loc.lng() });
-
+  
         console.log("Geocoding result:", results[0]);
-
-        const components = results[0].address_components;
-        
-            // Caută numele restaurantului din componenta de tip "establishment"
-        const nameComponent = components.find(comp =>
-            comp.types.includes("establishment")
-        );
-
-        const name = nameComponent
-            ? nameComponent.long_name
-            : results[0].formatted_address;
-
+  
+        // Extragem numele locației (dacă există)
+        const name = results[0].name || results[0].formatted_address;
         setRestaurantName(name);
         setShowMap(true);
       } else {
@@ -59,6 +50,7 @@ const MapPage = () => {
       }
     });
   };
+  
 
   const submitReview = async () => {
     if (!user || !restaurantName || !comment || !location) return;
@@ -115,7 +107,7 @@ const MapPage = () => {
           <input
             type="text"
             ref={addressRef}
-            placeholder="Type a restaurant address..."
+            placeholder="Type the name of a restaurant..."
             className="w-full border p-2 rounded mb-4"
           />
           <button
