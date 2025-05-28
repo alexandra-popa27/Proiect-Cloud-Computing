@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 
 const containerStyle = {
   width: "100%",
@@ -19,14 +19,11 @@ const MapPage = () => {
   const [restaurantName, setRestaurantName] = useState("");
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState("");
-  const [map, setMap] = useState(null);
-  const [marker, setMarker] = useState(null);
+  const [showMap, setShowMap] = useState(false);
   const addressRef = useRef();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
-    version: "beta",
   });
 
   useEffect(() => {
@@ -37,25 +34,12 @@ const MapPage = () => {
   const geocodeAddress = async () => {
     const address = addressRef.current.value;
     const geocoder = new window.google.maps.Geocoder();
-
     geocoder.geocode({ address }, (results, status) => {
       if (status === "OK") {
         const loc = results[0].geometry.location;
-        const newLocation = { lat: loc.lat(), lng: loc.lng() };
-        setLocation(newLocation);
+        setLocation({ lat: loc.lat(), lng: loc.lng() });
         setRestaurantName(results[0].formatted_address);
-
-        if (map) {
-          if (marker) marker.map = null; // remove previous marker
-
-          const advancedMarker = new window.google.maps.marker.AdvancedMarkerElement({
-            position: newLocation,
-            map: map,
-            title: "Your pinned restaurant",
-          });
-
-          setMarker(advancedMarker);
-        }
+        setShowMap(true);
       } else {
         alert("Geocoding failed: " + status);
       }
@@ -86,11 +70,8 @@ const MapPage = () => {
         setComment("");
         setLocation(null);
         setRestaurantName("");
+        setShowMap(false);
         addressRef.current.value = "";
-        if (marker) {
-          marker.map = null;
-          setMarker(null);
-        }
       } else {
         alert("Failed to submit review.");
       }
@@ -102,7 +83,7 @@ const MapPage = () => {
 
   return (
     <div className="relative bg-beige min-h-screen pb-24">
-      {/* Top image and title */}
+      {/* Header */}
       <div className="relative h-96 overflow-hidden">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Cooking Background" />
         <div className="absolute inset-0 flex items-center justify-center text-white text-4xl font-bold tracking-tight text-center">
@@ -110,37 +91,33 @@ const MapPage = () => {
         </div>
       </div>
 
-      {/* Section with form + map side by side */}
-      <div className="flex flex-col md:flex-row gap-6 p-4">
-        {/* Left side form */}
-        <div className="bg-white p-6 rounded-xl shadow-md border w-full md:w-1/2">
-          <h2 className="text-lg font-semibold mb-2 text-gray-700">
-            Have you tried a new restaurant? Tell your friends about it.
-          </h2>
-
+      {/* Main content: form + map */}
+      <div className="flex flex-col lg:flex-row p-4 gap-4">
+        {/* Form */}
+        <div className="lg:w-1/2 bg-white border border-gray-300 rounded-lg shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 mb-4">Have you tried a new restaurant? Tell your friends about it.</h2>
           <input
             type="text"
             ref={addressRef}
             placeholder="Type a restaurant address..."
-            className="w-full border p-2 rounded mb-3"
+            className="w-full border p-2 rounded mb-4"
           />
-
           <button onClick={geocodeAddress} className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
             Pin a new Restaurant Visit
           </button>
 
           {restaurantName && (
-            <p className="mt-2 text-green-700 font-medium">You have been at: <span className="italic">{restaurantName}</span></p>
+            <p className="mt-4 text-green-700 font-semibold">You have been at: <span className="italic">{restaurantName}</span></p>
           )}
 
           {location && (
             <>
-              <div>
-                <label className="block mt-4">Rate this place:</label>
+              <div className="mt-4">
+                <label className="block">Rate this place:</label>
                 <select
                   value={rating}
                   onChange={(e) => setRating(Number(e.target.value))}
-                  className="border p-2 rounded"
+                  className="border p-2 rounded w-full"
                 >
                   {[1, 2, 3, 4, 5].map((val) => (
                     <option key={val} value={val}>
@@ -160,27 +137,21 @@ const MapPage = () => {
                 />
               </div>
 
-              <button
-                onClick={submitReview}
-                className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-              >
+              <button onClick={submitReview} className="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                 Submit Review
               </button>
             </>
           )}
         </div>
 
-        {/* Right side map */}
-        <div className="w-full md:w-1/2">
-          {isLoaded && (
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={location || centerDefault}
-              zoom={14}
-              onLoad={(mapInstance) => setMap(mapInstance)}
-            />
-          )}
-        </div>
+        {/* Map */}
+        {isLoaded && showMap && (
+          <div className="lg:w-1/2 h-96 border border-gray-300 rounded-lg overflow-hidden">
+            <GoogleMap mapContainerStyle={containerStyle} center={location || centerDefault} zoom={14}>
+              {location && <Marker position={location} />}
+            </GoogleMap>
+          </div>
+        )}
       </div>
 
       {/* Bottom Navigation */}
