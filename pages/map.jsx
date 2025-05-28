@@ -20,6 +20,7 @@ const MapPage = () => {
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState("");
   const [showMap, setShowMap] = useState(false);
+  const [inputName, setInputName] = useState("");
   const addressRef = useRef();
 
   const { isLoaded } = useJsApiLoader({
@@ -33,30 +34,27 @@ const MapPage = () => {
 
   const geocodeAddress = async () => {
     const address = addressRef.current.value;
+    if (!address.trim()) return;
+
+    setInputName(address); // salvăm numele introdus
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ address }, (results, status) => {
-      if (status === "OK") {
+      if (status === "OK" && results.length > 0) {
         const loc = results[0].geometry.location;
         setLocation({ lat: loc.lat(), lng: loc.lng() });
-  
-        console.log("Geocoding result:", results[0]);
-  
-        // Extragem numele locației (dacă există)
-        const name = results[0].name || results[0].formatted_address;
-        setRestaurantName(name);
+        setRestaurantName(address); // folosim exact ce a introdus utilizatorul
         setShowMap(true);
       } else {
-        alert("Geocoding failed: " + status);
+        alert("We could not find the restaurant you searched.");
       }
     });
   };
-  
 
   const submitReview = async () => {
     if (!user || !restaurantName || !comment || !location) return;
 
     const review = {
-      restaurantName,
+      restaurantName: inputName,
       lat: location.lat,
       lng: location.lng,
       reviewerId: user._id,
@@ -134,7 +132,7 @@ const MapPage = () => {
                 >
                   {[1, 2, 3, 4, 5].map((val) => (
                     <option key={val} value={val}>
-                      {val} Star{val > 1 && "s"}
+                      {val} ⭐
                     </option>
                   ))}
                 </select>
@@ -168,7 +166,7 @@ const MapPage = () => {
                 <Marker
                   position={location}
                   label={{
-                    text: restaurantName,
+                    text: inputName,
                     fontSize: "14px",
                     fontWeight: "bold",
                   }}
