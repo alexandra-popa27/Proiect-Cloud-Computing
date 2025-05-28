@@ -1,31 +1,34 @@
-import { connectToDatabase } from "@/utils/db";
+import { getCollection } from "@/utils/functions";
+import {
+  sendBadRequest,
+  sendMethodNotAllowed,
+  sendOk
+} from "@/utils/apiMethods";
+import { ObjectId } from "mongodb";
 
 export default async function handler(req, res) {
+  const collection = await getCollection("reviews");
+
   if (req.method === "POST") {
-    try {
-      const { restaurantName, lat, lng, reviewerId, score, comment } = req.body;
+    const { restaurantName, lat, lng, reviewerId, score, comment } = req.body;
 
-      if (!restaurantName || !reviewerId || !score || !comment) {
-        return res.status(400).json({ error: "Missing required fields." });
-      }
-
-      const { db } = await connectToDatabase();
-      const result = await db.collection("reviews").insertOne({
-        restaurantName,
-        lat,
-        lng,
-        reviewerId,
-        score,
-        comment,
-        createdAt: new Date(),
-      });
-
-      return res.status(200).json({ message: "Review added", id: result.insertedId });
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Server error" });
+    if (!restaurantName || !reviewerId || !score || !comment) {
+      return sendBadRequest(res, "Missing required fields.");
     }
-  } else {
-    return res.status(405).json({ error: "Method not allowed" });
+
+    const review = {
+      restaurantName,
+      lat,
+      lng,
+      reviewerId: new ObjectId(reviewerId),
+      score,
+      comment,
+      createdAt: new Date(),
+    };
+
+    const result = await collection.insertOne(review);
+    return sendOk(res, { insertedId: result.insertedId });
   }
+
+  return sendMethodNotAllowed(res);
 }
