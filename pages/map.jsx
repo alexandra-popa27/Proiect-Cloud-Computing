@@ -15,8 +15,13 @@ const centerDefault = {
 const MapPage = () => {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [usersMap, setUsersMap] = useState({});
+  const [allReviews, setAllReviews] = useState([]);
+  const [friendsLocations, setFriendsLocations] = useState([]);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [location, setLocation] = useState(null);
   const [restaurantName, setRestaurantName] = useState("");
+  const [formattedAddress, setFormattedAddress] = useState("");
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState("");
   const [showMap, setShowMap] = useState(false);
@@ -29,21 +34,61 @@ const MapPage = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
-    if (stored) setUser(JSON.parse(stored));
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setUser(parsed);
+      fetchData(parsed);
+    }
   }, []);
+
+  const fetchData = async (currentUser) => {
+    const [reviewsRes, usersRes] = await Promise.all([
+      fetch("/api/reviews"),
+      fetch("/api/users"),
+    ]);
+    const reviewsData = await reviewsRes.json();
+    const usersData = await usersRes.json();
+
+    const mapUsers = {};
+    usersData.data.forEach((u) => {
+      mapUsers[u._id] = u;
+    });
+    setUsersMap(mapUsers);
+
+    const friendIds = new Set([currentUser._id, ...(currentUser.friends || [])]);
+    const friendReviews = reviewsData.data.filter((r) =>
+      friendIds.has(r.reviewerId)
+    );
+    setAllReviews(friendReviews);
+
+    // Group by restaurantName for unique pinning
+    const uniqueRestaurants = {};
+    friendReviews.forEach((r) => {
+      if (!uniqueRestaurants[r.restaurantName]) {
+        uniqueRestaurants[r.restaurantName] = {
+          restaurantName: r.restaurantName,
+          lat: r.lat,
+          lng: r.lng,
+        };
+      }
+    });
+    setFriendsLocations(Object.values(uniqueRestaurants));
+  };
 
   const geocodeAddress = async () => {
     const address = addressRef.current.value;
     if (!address.trim()) return;
 
-    setInputName(address); // salvăm numele introdus
+    setInputName(address);
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ address }, (results, status) => {
       if (status === "OK" && results.length > 0) {
         const loc = results[0].geometry.location;
         setLocation({ lat: loc.lat(), lng: loc.lng() });
-        setRestaurantName(address); // folosim exact ce a introdus utilizatorul
+        setFormattedAddress(results[0].formatted_address);
+        setRestaurantName(address);
         setShowMap(true);
+        setSelectedRestaurant(null);
       } else {
         alert("We could not find the restaurant you searched.");
       }
@@ -74,8 +119,10 @@ const MapPage = () => {
         setComment("");
         setLocation(null);
         setRestaurantName("");
+        setFormattedAddress("");
         setShowMap(false);
         addressRef.current.value = "";
+        fetchData(user);
       } else {
         alert("Failed to submit review.");
       }
@@ -95,9 +142,70 @@ const MapPage = () => {
         </div>
       </div>
 
-      {/* Main content: form + map */}
-      <div className="flex flex-col lg:flex-row p-4 gap-4">
-        {/* Form */}
+      {/* Friends Map Section */}
+      <div className="bg-white mt-4 mx-4 p-4 rounded-lg shadow border">
+        <h2 className="text-xl font-bold text-center text-gray-700 mb-2">Check the restaurants your friends have tried.</h2>
+        {isLoaded && (
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={centerDefault}
+            zoom={12}
+            onClick={() => setSelectedRestaurant(null)}
+          >
+            {friendsLocations.map((r, idx) => (
+              <Marker
+                key={idx}
+                position={{ lat: r.lat, lng: r.lng }}
+                onClick={() => setSelectedRestaurant(r.restaurantName)}
+                label={{
+                  text: r.restaurantName,
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+              />
+            ))}
+          </GoogleMap>
+        )}
+
+        {selectedRestaurant && (
+          <div className="mt-4 p-4 bg-gray-100 rounded shadow-inner">
+            <h3 className="text-lg font-semibold">Restaurant: {selectedRestaurant}</h3>
+            <div className="mt-2 flex flex-col gap-4">
+              {allReviews
+                .filter((r) => r.restaurantName === selectedRestaurant)
+                .map((review, idx) => {
+                  const reviewer = usersMap[review.reviewerId];
+                  const profileImage = reviewer?.profilePicture?.trim() !== "" ? reviewer.profilePicture : "/profile_icon.jpg";
+                  const name = reviewer?.name || "Unknown";
+                  const date = new Date(review.createdAt).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  });
+
+                  return (
+                    <div key={idx} className="bg-white p-3 rounded border shadow-sm relative">
+                      <div className="flex items-center gap-3">
+                        <img src={profileImage} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                        <div>
+                          <div className="font-bold text-gray-800">{name}</div>
+                          <div className="text-sm text-gray-600">Score: {review.score} ⭐</div>
+                          <div className="text-gray-700">{review.comment}</div>
+                        </div>
+                      </div>
+                      <div className="absolute top-2 right-3 text-xs text-gray-400">{date}</div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* User Review Form Section */}
+      <div className="flex flex-col lg:flex-row p-4 gap-4 mt-8">
         <div className="lg:w-1/2 bg-white border border-gray-300 rounded-lg shadow-md p-4">
           <h2 className="text-lg font-semibold text-gray-700 mb-4">
             Have you tried a new restaurant? Tell your friends about it.
@@ -115,9 +223,9 @@ const MapPage = () => {
             Pin a new Restaurant Visit
           </button>
 
-          {restaurantName && (
+          {formattedAddress && (
             <p className="mt-4 text-green-700 font-semibold">
-              You have been at: <span className="italic">{restaurantName}</span>
+              You have been at: <span className="italic">{formattedAddress}</span>
             </p>
           )}
 
@@ -158,7 +266,7 @@ const MapPage = () => {
           )}
         </div>
 
-        {/* Map */}
+        {/* User map preview */}
         {isLoaded && showMap && (
           <div className="lg:w-1/2 h-96 border border-gray-300 rounded-lg overflow-hidden">
             <GoogleMap mapContainerStyle={containerStyle} center={location || centerDefault} zoom={14}>
