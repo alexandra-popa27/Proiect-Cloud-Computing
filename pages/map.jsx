@@ -38,7 +38,13 @@ const MapPage = () => {
       if (status === "OK") {
         const loc = results[0].geometry.location;
         setLocation({ lat: loc.lat(), lng: loc.lng() });
-        setRestaurantName(results[0].formatted_address);
+
+        const components = results[0].address_components;
+        const name = components && components.length > 0
+          ? components[0].long_name
+          : results[0].formatted_address;
+
+        setRestaurantName(name);
         setShowMap(true);
       } else {
         alert("Geocoding failed: " + status);
@@ -95,19 +101,26 @@ const MapPage = () => {
       <div className="flex flex-col lg:flex-row p-4 gap-4">
         {/* Form */}
         <div className="lg:w-1/2 bg-white border border-gray-300 rounded-lg shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4">Have you tried a new restaurant? Tell your friends about it.</h2>
+          <h2 className="text-lg font-semibold text-gray-700 mb-4">
+            Have you tried a new restaurant? Tell your friends about it.
+          </h2>
           <input
             type="text"
             ref={addressRef}
             placeholder="Type a restaurant address..."
             className="w-full border p-2 rounded mb-4"
           />
-          <button onClick={geocodeAddress} className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+          <button
+            onClick={geocodeAddress}
+            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+          >
             Pin a new Restaurant Visit
           </button>
 
           {restaurantName && (
-            <p className="mt-4 text-green-700 font-semibold">You have been at: <span className="italic">{restaurantName}</span></p>
+            <p className="mt-4 text-green-700 font-semibold">
+              You have been at: <span className="italic">{restaurantName}</span>
+            </p>
           )}
 
           {location && (
@@ -137,7 +150,10 @@ const MapPage = () => {
                 />
               </div>
 
-              <button onClick={submitReview} className="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+              <button
+                onClick={submitReview}
+                className="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              >
                 Submit Review
               </button>
             </>
@@ -148,7 +164,16 @@ const MapPage = () => {
         {isLoaded && showMap && (
           <div className="lg:w-1/2 h-96 border border-gray-300 rounded-lg overflow-hidden">
             <GoogleMap mapContainerStyle={containerStyle} center={location || centerDefault} zoom={14}>
-              {location && <Marker position={location} />}
+              {location && (
+                <Marker
+                  position={location}
+                  label={{
+                    text: restaurantName,
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                  }}
+                />
+              )}
             </GoogleMap>
           </div>
         )}
