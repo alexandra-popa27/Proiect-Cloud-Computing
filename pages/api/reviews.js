@@ -30,5 +30,10 @@ export default async function handler(req, res) {
     return sendOk(res, { insertedId: result.insertedId });
   }
 
+  if (req.method === "GET") {
+    const reviews = await collection.find({}).toArray();
+    return sendOk(res, reviews);
+  }
+
   return sendMethodNotAllowed(res);
 }
