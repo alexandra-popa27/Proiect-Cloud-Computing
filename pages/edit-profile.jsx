@@ -68,7 +68,7 @@ const EditProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-beige p-6 flex flex-col items-center">
+    <div className="relative bg-beige min-h-screen overflow-y-auto pb-24">
       {/* Header */}
       <div className="relative h-96 overflow-hidden">
         <img className="absolute inset-0 w-full h-full object-cover" src="/cooking.jpg" alt="Edit Profile" />
