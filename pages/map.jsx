@@ -262,8 +262,8 @@ const MapPage = () => {
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  maxLength={100}
-                  placeholder="Write a short review (max 100 characters)."
+                  maxLength={200}
+                  placeholder="Write a short review (max 200 characters)."
                   className="w-full border p-2 rounded"
                 />
               </div>
